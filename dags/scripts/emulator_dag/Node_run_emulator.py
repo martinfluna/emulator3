@@ -37,7 +37,7 @@ def run_emu():
     EMULATOR_state['iter']=EMULATOR_state['iter']+1    
     print('Time final',time_final)
     #READ FEEDING PROFILE from db_output
-    # EMULATOR_design=method_emulator.read('db_emulator.json',EMULATOR_design,EMULATOR_config)    
+    EMULATOR_design=method_emulator.read('db_emulator.json',EMULATOR_design,EMULATOR_config)    
     # #METHOD SIMULATION        
     NEW_EMULATOR_state=method_emulator.simulate(time_initial,time_final,EMULATOR_state,EMULATOR_design,EMULATOR_config)
         

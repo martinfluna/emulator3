@@ -7,7 +7,7 @@ import time
 
 # %% 
 def start_emu():
-    with open('db_emulator_template.json') as json_file:   
+    with open('db_emulator_template_new.json') as json_file:   
         db_emulator = json.load(json_file)
     with open('db_emulator.json', "w") as outfile:
         json.dump(db_emulator, outfile) 
@@ -29,8 +29,8 @@ def start_emu():
     for i1 in brxtor_list:
         EMULATOR_design[i1]={}
         EMULATOR_design[i1]['Pulses']={'time_pulse':EMULATOR_config[i1]['Pulse_profile']['time_pulse'],'Feed_pulse':EMULATOR_config[i1]['Pulse_profile']['Feed_pulse'],
-                                       'time_enbaseA':EMULATOR_config[i1]['Pulse_profile']['time_enbaseA'],'Feed_enbaseA':EMULATOR_config[i1]['Pulse_profile']['Feed_enbaseA'],
-                                       'time_enbaseB':EMULATOR_config[i1]['Pulse_profile']['time_enbaseB'],'Feed_enbaseB':EMULATOR_config[i1]['Pulse_profile']['Feed_enbaseB'],
+                                       'time_dextrine':EMULATOR_config[i1]['Pulse_profile']['time_dextrine'],'Feed_dextrine':EMULATOR_config[i1]['Pulse_profile']['Feed_dextrine'],
+                                       'time_enzyme':EMULATOR_config[i1]['Pulse_profile']['time_enzyme'],'Feed_enzyme':EMULATOR_config[i1]['Pulse_profile']['Feed_enzyme'],
                                        'time_sample':EMULATOR_config[i1]['time_sample']['Xv']}
         
         
@@ -40,8 +40,8 @@ def start_emu():
             
             
         EMULATOR_design[i1]['Glucose_feed']=EMULATOR_config[i1]['Glucose_feed']
-        EMULATOR_design[i1]['EnBaseA_feed']=EMULATOR_config[i1]['EnBaseA_feed']
-        EMULATOR_design[i1]['EnBaseB_feed']=EMULATOR_config[i1]['EnBaseB_feed']
+        EMULATOR_design[i1]['Dextrine_feed']=EMULATOR_config[i1]['Dextrine_feed']
+        EMULATOR_design[i1]['Enzyme_feed']=EMULATOR_config[i1]['Enzyme_feed']
       
         EMULATOR_design[i1]['Induction_time']=EMULATOR_config[i1]['Induction_time']
         EMULATOR_design[i1]['Inductor_conc']=EMULATOR_config[i1]['Inductor_conc']
@@ -52,4 +52,30 @@ def start_emu():
         
     with open('EMULATOR_design.json', "w") as outfile:
         json.dump(EMULATOR_design, outfile) 
+        
+# %%  
+    for i4 in brxtor_list:
+        
+        tsf_glucose=EMULATOR_design[i4]['Pulses']['time_pulse']
+        F_glucose=np.cumsum(EMULATOR_design[i4]['Pulses']['Feed_pulse'])
+        db_emulator[i4]['setpoints']['Feed_glucose_cum_setpoints']={'setpoint_time':{},'Feed_glucose_cum_setpoints':{}}
+        for i5 in range(0,len(tsf_glucose)):
+            db_emulator[i4]['setpoints']['Feed_glucose_cum_setpoints']['setpoint_time'][str(i5)]=tsf_glucose[i5]
+            db_emulator[i4]['setpoints']['Feed_glucose_cum_setpoints']['Feed_glucose_cum_setpoints'][str(i5)]=F_glucose[i5]
+            
+        tsf_dextrine=EMULATOR_design[i4]['Pulses']['time_dextrine']
+        F_dextrine=np.cumsum(EMULATOR_design[i4]['Pulses']['Feed_dextrine'])
+        db_emulator[i4]['setpoints']['Feed_dextrine_cum_setpoints']={'setpoint_time':{},'Feed_dextrine_cum_setpoints':{}}
+        for i5 in range(0,len(tsf_dextrine)):
+            db_emulator[i4]['setpoints']['Feed_dextrine_cum_setpoints']['setpoint_time'][str(i5)]=tsf_dextrine[i5]
+            db_emulator[i4]['setpoints']['Feed_dextrine_cum_setpoints']['Feed_dextrine_cum_setpoints'][str(i5)]=F_dextrine[i5]
+            
+        tsf_enzyme=EMULATOR_design[i4]['Pulses']['time_enzyme']
+        F_enzyme=np.cumsum(EMULATOR_design[i4]['Pulses']['Feed_enzyme'])
+        db_emulator[i4]['setpoints']['Feed_enzyme_cum_setpoints']={'setpoint_time':{},'Feed_enzyme_cum_setpoints':{}}
+        for i5 in range(0,len(tsf_enzyme)):
+            db_emulator[i4]['setpoints']['Feed_enzyme_cum_setpoints']['setpoint_time'][str(i5)]=tsf_enzyme[i5]
+            db_emulator[i4]['setpoints']['Feed_enzyme_cum_setpoints']['Feed_enzyme_cum_setpoints'][str(i5)]=F_enzyme[i5]
 
+    with open('db_emulator.json', "w") as outfile:
+        json.dump(db_emulator, outfile) 

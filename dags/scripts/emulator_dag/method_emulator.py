@@ -24,7 +24,7 @@ def simulate(time_initial,time_final,EMULATOR_state,EMULATOR_design,EMULATOR_con
         for i2 in EMULATOR_config['Species_list']:
             Xo0=np.append(Xo0,EMULATOR_state[i1]['Current'][i2])
         u0=np.array([EMULATOR_design[i1]['Glucose_feed'],nn,EMULATOR_config['number_br'],EMULATOR_design[i1]['Induction_time'],EMULATOR_design[i1]['Inductor_conc'],
-                     EMULATOR_design[i1]['EnBaseA_feed'],EMULATOR_design[i1]['EnBaseB_feed']])
+                     EMULATOR_design[i1]['Dextrine_feed'],EMULATOR_design[i1]['Enzyme_feed']])
         # THs=np.array(EMULATOR_config['Params'])
         THs=EMULATOR_config['Params']
         # print(THs)
@@ -72,14 +72,10 @@ def sample(time_initial,time_final,EMULATOR_state,EMULATOR_design,EMULATOR_confi
     return NEW_EMULATOR_state
 # %% Write
 def write(filename,time_initial,time_final,EMULATOR_state,EMULATOR_design,EMULATOR_config):
-    n_check=0
-    while n_check==0:
-        try:    
-            with open(filename) as json_file:   
-                File_dict = json.load(json_file)
-                n_check=1
-        except:
-            print('fail write (load) emulator')
+    
+    with open(filename) as json_file:   
+        File_dict = json.load(json_file)
+
     time_samples_analysis=EMULATOR_config['time_samples_analysis']        
     for i1 in EMULATOR_config['Brxtor_list']:
       
@@ -183,63 +179,65 @@ def write(filename,time_initial,time_final,EMULATOR_state,EMULATOR_design,EMULAT
             
         File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['measurement_time']={}
         File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['Cumulated_feed_volume_glucose']={}
+        File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_dextrine']['measurement_time']={}
+        File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_dextrine']['Cumulated_feed_volume_dextrine']={}
+        File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_enzyme']['measurement_time']={}
+        File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_enzyme']['Cumulated_feed_volume_enzyme']={}
+        for i3 in range(0,len(tsf)):
+            File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['measurement_time'][str(i3)]=tsf[i3]+0
+            File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['Cumulated_feed_volume_glucose'][str(i3)]=Xsf_all[i3]+0
+        for i3 in range(0,len(tsf)):
+            File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['measurement_time'][str(i3)]=tsf[i3]+0
+            File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['Cumulated_feed_volume_glucose'][str(i3)]=Xsf_all[i3]+0
         for i3 in range(0,len(tsf)):
             File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['measurement_time'][str(i3)]=tsf[i3]+0
             File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['Cumulated_feed_volume_glucose'][str(i3)]=Xsf_all[i3]+0
         
-    n_check=0
-    while n_check==0:
-        try:    
-            with open(filename, "w") as outfile:
-                json.dump(File_dict, outfile) 
-            n_check=1
-        except:
-            print('fail write emulator')  
-            time.sleep(1.05)
-    # n_check=0
-    # while n_check==0:
-    #     try:    
-    #         with open('db_emulator_streamlit.json', "w") as outfile:
-    #             json.dump(File_dict, outfile) 
-    #         n_check=1
-    #     except:
-    #         print('fail write emulator') 
-    #         time.sleep(1.05)
-    # n_check=0
-    # while n_check==0:
-    #     try:    
-    #         with open('db_emulator_dot.json', "w") as outfile:
-    #             json.dump(File_dict, outfile) 
-    #         n_check=1
-    #     except:
-    #         print('fail write emulator') 
-    #         time.sleep(1.05)
-            
+    
+    with open(filename, "w") as outfile:
+        json.dump(File_dict, outfile) 
+        
     return File_dict
 # %% Read
 def read(filename,EMULATOR_design,EMULATOR_config):
     NEW_EMULATOR_design=deepcopy(EMULATOR_design)
-    n_check=0
-    while n_check==0:
-        try:    
-            with open(filename) as json_file:   
+  
+    with open(filename) as json_file:   
                 File_dict = json.load(json_file)
-            n_check=1
-        except:
-            print('fail read emulator')
-            time.sleep(1.05)
+
        
     for i1 in EMULATOR_config['Brxtor_list']:
-        f0=np.array(list(File_dict[i1]['setpoints']['Feed_glc_cum_setpoints'].values()))
+        f0_pulse=np.array(list(File_dict[i1]['setpoints']['Feed_glucose_cum_setpoints']['Feed_glucose_cum_setpoints'].values()))
+        tf_pulse=np.array(list(File_dict[i1]['setpoints']['Feed_glucose_cum_setpoints']['setpoint_time'].values()))/3600
+        f0_dextrine=np.array(list(File_dict[i1]['setpoints']['Feed_dextrine_cum_setpoints']['Feed_dextrine_cum_setpoints'].values()))
+        tf_dextrine=np.array(list(File_dict[i1]['setpoints']['Feed_dextrine_cum_setpoints']['setpoint_time'].values()))/3600
+        f0_enzyme=np.array(list(File_dict[i1]['setpoints']['Feed_enzyme_cum_setpoints']['Feed_enzyme_cum_setpoints'].values()))
+        tf_enzyme=np.array(list(File_dict[i1]['setpoints']['Feed_enzyme_cum_setpoints']['setpoint_time'].values()))/3600
+        # f0_pulse=np.array(File_dict[i1]['setpoints']['Feed_glucose_cum_setpoints']['Feed_glucose_cum_setpoints'])
+        # tf_pulse=np.array(File_dict[i1]['setpoints']['Feed_glucose_cum_setpoints']['setpoint_time'])/3600
+        # f0_dextrine=np.array(File_dict[i1]['setpoints']['Feed_dextrine_cum_setpoints']['Feed_dextrine_cum_setpoints'])
+        # tf_dextrine=np.array(File_dict[i1]['setpoints']['Feed_dextrine_cum_setpoints']['setpoint_time'])/3600
+        # f0_enzyme=np.array(File_dict[i1]['setpoints']['Feed_enzyme_cum_setpoints']['Feed_enzyme_cum_setpoints'])
+        # tf_enzyme=np.array(File_dict[i1]['setpoints']['Feed_enzyme_cum_setpoints']['setpoint_time'])/3600
 
-        tf0=np.array(list(File_dict[i1]['setpoints']['cultivation_age'].values()))
-
-        mask_f0=f0!=None
-        f_acc=f0[mask_f0]
-        f=np.hstack([f_acc[0],np.diff(f_acc)])
+        # f_pulse=np.hstack([f0_pulse[0],np.diff(f0_pulse)])
+        # f_dextrine=np.hstack([f0_dextrine[0],np.diff(f0_dextrine)])
+        # f_enzyme=np.hstack([f0_enzyme[0],np.diff(f0_enzyme)])
+        f_pulse=np.hstack([f0_pulse[0],np.diff(f0_pulse)])
+        f_dextrine=np.hstack([f0_dextrine[0],np.diff(f0_dextrine)])
+        f_enzyme=np.hstack([f0_enzyme[0],np.diff(f0_enzyme)])
+        # mask_f0=f0!=None
+        # f_acc=f0[mask_f0]
+        # f=np.hstack([f_acc[0],np.diff(f_acc)])
         
-        tf=tf0[mask_f0]/3600
+        # tf=tf0[mask_f0]/3600
 
-        NEW_EMULATOR_design[i1]['Pulses']['time_pulse']=tf.tolist()
-        NEW_EMULATOR_design[i1]['Pulses']['Feed_pulse']=f.tolist()
-    return NEW_EMULATOR_design
+        NEW_EMULATOR_design[i1]['Pulses']['time_pulse']=tf_pulse.tolist()
+        NEW_EMULATOR_design[i1]['Pulses']['Feed_pulse']=f_pulse.tolist()
+        NEW_EMULATOR_design[i1]['Pulses']['time_dextrine']=tf_dextrine.tolist()
+        NEW_EMULATOR_design[i1]['Pulses']['Feed_dextrine']=f_dextrine.tolist()
+        NEW_EMULATOR_design[i1]['Pulses']['time_enzyme']=tf_enzyme.tolist()
+        NEW_EMULATOR_design[i1]['Pulses']['Feed_enzyme']=f_enzyme.tolist()
+        
+        return NEW_EMULATOR_design
+        

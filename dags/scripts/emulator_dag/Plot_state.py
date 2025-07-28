@@ -15,7 +15,7 @@ with open('EMULATOR_config.json') as json_file:
         EMULATOR_config = json.load(json_file)
 
 mbr='19419'
-species='Glucose' # ['Xv','Glucose','Acetate','DOT','Fluo_RFP','Volume','Dextrin_S','Dextrin_R','EnBaseB']
+species='Dextrine_R' # ['Xv','Glucose','Acetate','DOT','Fluo_RFP','Volume','Dextrine_S','Dextrine_R','Enzyme']
 
 t=EMULATOR_state[mbr]['All'][species]['time']
 y=EMULATOR_state[mbr]['All'][species]['Value']        

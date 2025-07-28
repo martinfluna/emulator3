@@ -22,37 +22,37 @@ def function_simulation(ts0,Xo0,u0,THs,D0={}):
     time_sample_all=np.array(D0['time_sample'])
     t_u_sample=np.round(time_sample_all[(time_sample_all>=ts_start) & (time_sample_all<=ts_end)],decimals=6)
     
-    time_enbaseA_all=np.array(D0['time_enbaseA'])
-    t_u_enbaseA=np.round(time_enbaseA_all[(time_enbaseA_all>=ts_start) & (time_enbaseA_all<=ts_end)],decimals=6)
-    Feed_enbaseA_all=np.array(D0['Feed_enbaseA'])
-    uu_enbaseA=Feed_enbaseA_all[(time_enbaseA_all>=ts_start) & (time_enbaseA_all<=ts_end)]
+    time_dextrine_all=np.array(D0['time_dextrine'])
+    t_u_dextrine=np.round(time_dextrine_all[(time_dextrine_all>=ts_start) & (time_dextrine_all<=ts_end)],decimals=6)
+    Feed_dextrine_all=np.array(D0['Feed_dextrine'])
+    uu_dextrine=Feed_dextrine_all[(time_dextrine_all>=ts_start) & (time_dextrine_all<=ts_end)]
 
-    time_enbaseB_all=np.array(D0['time_enbaseB'])
-    t_u_enbaseB=np.round(time_enbaseB_all[(time_enbaseB_all>=ts_start) & (time_enbaseB_all<=ts_end)],decimals=6)
-    Feed_enbaseB_all=np.array(D0['Feed_enbaseB'])
-    uu_enbaseB=Feed_enbaseB_all[(time_enbaseB_all>=ts_start) & (time_enbaseB_all<=ts_end)]
+    time_enzyme_all=np.array(D0['time_enzyme'])
+    t_u_enzyme=np.round(time_enzyme_all[(time_enzyme_all>=ts_start) & (time_enzyme_all<=ts_end)],decimals=6)
+    Feed_enzyme_all=np.array(D0['Feed_enzyme'])
+    uu_enzyme=Feed_enzyme_all[(time_enzyme_all>=ts_start) & (time_enzyme_all<=ts_end)]
     
     time_medium_all=np.arange(10/60,time_pulse_all[-1]+10/60,10/60)
     t_u_medium=np.round(time_medium_all[(time_medium_all>=ts_start) & (time_medium_all<=ts_end)],decimals=6)
 
     
     
-    time_u_concat=np.concat((t_u_pulse,t_u_sample,t_u_enbaseA,t_u_enbaseB,t_u_medium))
+    time_u_concat=np.concat((t_u_pulse,t_u_sample,t_u_dextrine,t_u_enzyme,t_u_medium))
     t_u=np.unique(time_u_concat)    
     # t_u=np.unique(time_u_concat)
 
-    # Index_pulse_all=np.concat(time_pulse_all*0+1,time_sample_all*0,time_enbaseA_all*0,time_enbaseB_all*0)
-    # Index_sample_all=np.concat(time_pulse_all*0,time_sample_all*0+1,time_enbaseA_all*0,time_enbaseB_all*0)
-    # Index_enbaseA_all=np.concat(time_pulse_all*0,time_sample_all*0,time_enbaseA_all*0+1,time_enbaseB_all*0)
-    # Index_enbaseB_all=np.concat(time_pulse_all*0,time_sample_all*0,time_enbaseA_all*0,time_enbaseB_all*0+1)
+    # Index_pulse_all=np.concat(time_pulse_all*0+1,time_sample_all*0,time_dextrine_all*0,time_enzyme_all*0)
+    # Index_sample_all=np.concat(time_pulse_all*0,time_sample_all*0+1,time_dextrine_all*0,time_enzyme_all*0)
+    # Index_dextrine_all=np.concat(time_pulse_all*0,time_sample_all*0,time_dextrine_all*0+1,time_enzyme_all*0)
+    # Index_enzyme_all=np.concat(time_pulse_all*0,time_sample_all*0,time_dextrine_all*0,time_enzyme_all*0+1)
         
     # Index_all=np.argsort(time_all)
     # time_all=np.sort(time_all)
     
     # Index_pulse_all=Index_pulse_all[time_all]
     # Index_sample_all=Index_sample_all[time_all]
-    # Index_enbaseA_all=Index_enbaseA_all[time_all]
-    # Index_enbaseB_all=Index_enbaseB_all[time_all]
+    # Index_dextrine_all=Index_dextrine_all[time_all]
+    # Index_enzyme_all=Index_enzyme_all[time_all]
     
 
     # t_u=time_pulse_all[(time_pulse_all>=ts_start) & (time_pulse_all<=ts_end)]
@@ -83,29 +83,32 @@ def function_simulation(ts0,Xo0,u0,THs,D0={}):
     
     for i in t_u[:-1]:
         ts1=np.linspace(t_u[ni],t_u[ni+1],5+1)
-        
+        V_old=Xo1[5]
         if i in t_u_pulse:
             index_u_pulse=int(np.where(t_u_pulse==t_u[ni])[0][0])
             Xo1[1]=Xo1[1]+uu_pulse[index_u_pulse]*1e-6*u0[0]/0.01
             Xo1[5]=Xo1[5]+uu_pulse[index_u_pulse]*1e-6
             #add dilution to all species
             
-        if i in t_u_enbaseA:
-            index_u_enbaseA=int(np.where(t_u_enbaseA==t_u[ni])[0][0])
-            Xo1[6]=Xo1[6]+uu_enbaseA[index_u_enbaseA]*1e-6*u0[5]/0.01*(.46)
-            Xo1[7]=Xo1[7]+uu_enbaseA[index_u_enbaseA]*1e-6*u0[5]/0.01*(1-.46)
-            Xo1[5]=Xo1[5]+uu_enbaseA[index_u_enbaseA]*1e-6
+        if i in t_u_dextrine:
+            index_u_dextrine=int(np.where(t_u_dextrine==t_u[ni])[0][0])
+            Xo1[6]=Xo1[6]+uu_dextrine[index_u_dextrine]*1e-6*u0[5]/0.01*(.46)
+            Xo1[7]=Xo1[7]+uu_dextrine[index_u_dextrine]*1e-6*u0[5]/0.01*(1-.46)
+            Xo1[5]=Xo1[5]+uu_dextrine[index_u_dextrine]*1e-6
             
-        if i in t_u_enbaseB:
-            index_u_enbaseB=int(np.where(t_u_enbaseB==t_u[ni])[0][0])
-            Xo1[8]=Xo1[8]+uu_enbaseB[index_u_enbaseB]*1e-6*u0[6]/0.01*0.7
-            Xo1[5]=Xo1[5]+uu_enbaseB[index_u_enbaseB]*1e-6
+        if i in t_u_enzyme:
+            index_u_enzyme=int(np.where(t_u_enzyme==t_u[ni])[0][0])
+            Xo1[8]=Xo1[8]+uu_enzyme[index_u_enzyme]*1e-6*u0[6]/0.01*0.7
+            Xo1[5]=Xo1[5]+uu_enzyme[index_u_enzyme]*1e-6
             
         if i in t_u_sample:
             Xo1[5]=Xo1[5]-25*1e-6
         if i in t_u_medium:
-            Xo1[5]=Xo1[5]+25*1e-6
+            Xo1[5]=Xo1[5]+1*1e-6
         
+        V_new=Xo1[5]
+        Xo1=Xo1*V_old/V_new
+        Xo1[5]=V_new
 
         
         t,y=intM(ts1,Xo1,u0,TH1)

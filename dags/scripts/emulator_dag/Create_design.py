@@ -5,16 +5,16 @@ import json
 t_duration=14.0
 
 
-species_list=['Xv','Glucose','Acetate','DOT','Fluo_RFP','Volume','Dextrin_S','Dextrin_R','EnBaseB'] #Model species used in the model
+species_list=['Xv','Glucose','Acetate','DOT','Fluo_RFP','Volume','Dextrine_S','Dextrine_R','Enzyme'] #Model species used in the model
 
-species_IC=[0.18*1,3,0,100,0,0.01,0,0,0] #Initial states for the species listed above
-glucose_IC=[4,4,4,4,4,4,4,4]*3 #Initial states for the species listed above
+species_IC=[0.18*1,3,0,100,0,0.01,15*.45,15*.55,5] #Initial states for the species listed above
+glucose_IC=[4*0,4,4,4,4,4,4,4]*3 #Initial states for the species listed above
 
 
 
 time_pulses=np.arange(5+5/60,t_duration,10/60) #Time in hours
-time_enbaseA=np.arange(5+10/60,t_duration,2) #Time in hours
-time_enbaseB=np.arange(5+11/60,t_duration,0.5) #Time in hours
+time_dextrine=np.arange(5+10/60,t_duration,2) #Time in hours
+time_enzyme=np.arange(5+11/60,t_duration,0.5) #Time in hours
 
 
 time_samples_columns={'col1':np.arange(.99,t_duration,1).tolist()+[t_duration],'col2':np.arange(.99,t_duration,1).tolist()+[t_duration],'col3':np.arange(.99,t_duration,1).tolist()+[t_duration]} #Time in hours
@@ -29,8 +29,8 @@ Noise_time=1 # in %
 mbr_list=np.arange(19419,19443,1) #names of the bioreactors
 
 Glucose_feed=[200]*len(mbr_list) # in g/l
-EnBaseA_feed=[100]*len(mbr_list) # in U/l
-EnBaseB_feed=[3000]*len(mbr_list) # in g/l
+Dextrine_feed=[100]*len(mbr_list) # in U/l
+Enzyme_feed=[3000]*len(mbr_list) # in g/l
 
 Induction_time=[10]*len(mbr_list) #Time in hours
 Inductor_conc=[1]*len(mbr_list) # 0 to 1 for now
@@ -69,15 +69,15 @@ for i1 in Exp_list:
 n2=0
 for i1 in Exp_list:
     EMULATOR_config[i1]['Glucose_feed']=float(Glucose_feed[n2])
-    EMULATOR_config[i1]['EnBaseA_feed']=float(EnBaseA_feed[n2])
-    EMULATOR_config[i1]['EnBaseB_feed']=float(EnBaseB_feed[n2])
+    EMULATOR_config[i1]['Dextrine_feed']=float(Dextrine_feed[n2])
+    EMULATOR_config[i1]['Enzyme_feed']=float(Enzyme_feed[n2])
 
     EMULATOR_config[i1]['Induction_time']=float(Induction_time[n2])
     EMULATOR_config[i1]['Inductor_conc']=float(Inductor_conc[n2])
     
     EMULATOR_config[i1]['Pulse_profile']={'time_pulse':time_pulses.tolist(),'Feed_pulse':(0+np.zeros(len(time_pulses.tolist()))).tolist(),
-                                          'time_enbaseA':time_enbaseA.tolist(),'Feed_enbaseA':(5+np.zeros(len(time_enbaseA.tolist()))).tolist(),
-                                          'time_enbaseB':time_enbaseB.tolist(),'Feed_enbaseB':(5+np.zeros(len(time_enbaseB.tolist()))).tolist()}
+                                          'time_dextrine':time_dextrine.tolist(),'Feed_dextrine':(25+np.zeros(len(time_dextrine.tolist()))).tolist(),
+                                          'time_enzyme':time_enzyme.tolist(),'Feed_enzyme':(25+np.zeros(len(time_enzyme.tolist()))).tolist()}
 
     EMULATOR_config[i1]['time_sample']={}
     for i2 in EMULATOR_config['Species_list']:
