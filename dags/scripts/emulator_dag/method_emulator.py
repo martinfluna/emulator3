@@ -237,14 +237,14 @@ def read(filename,EMULATOR_design,EMULATOR_config):
 
        
     for i1 in EMULATOR_config['Brxtor_list']:
-        f0_pulse=np.array(list(File_dict[i1]['setpoints']['Feed_glucose_cum_setpoints']['Feed_glucose_cum_setpoints'].values()))
-        tf_pulse=np.array(list(File_dict[i1]['setpoints']['Feed_glucose_cum_setpoints']['setpoint_time'].values()))/3600
+        f0_pulse=np.array(list(File_dict[i1]['setpoints']['Feed_glc_cum_setpoints']['Feed_glc_cum_setpoints'].values()))
+        tf_pulse=np.array(list(File_dict[i1]['setpoints']['Feed_glc_cum_setpoints']['setpoint_time'].values()))/3600
         f0_dextrine=np.array(list(File_dict[i1]['setpoints']['Feed_dextrine_cum_setpoints']['Feed_dextrine_cum_setpoints'].values()))
         tf_dextrine=np.array(list(File_dict[i1]['setpoints']['Feed_dextrine_cum_setpoints']['setpoint_time'].values()))/3600
         f0_enzyme=np.array(list(File_dict[i1]['setpoints']['Feed_enzyme_cum_setpoints']['Feed_enzyme_cum_setpoints'].values()))
         tf_enzyme=np.array(list(File_dict[i1]['setpoints']['Feed_enzyme_cum_setpoints']['setpoint_time'].values()))/3600
-        # f0_pulse=np.array(File_dict[i1]['setpoints']['Feed_glucose_cum_setpoints']['Feed_glucose_cum_setpoints'])
-        # tf_pulse=np.array(File_dict[i1]['setpoints']['Feed_glucose_cum_setpoints']['setpoint_time'])/3600
+        # f0_pulse=np.array(File_dict[i1]['setpoints']['Feed_glc_cum_setpoints']['Feed_glc_cum_setpoints'])
+        # tf_pulse=np.array(File_dict[i1]['setpoints']['Feed_glc_cum_setpoints']['setpoint_time'])/3600
         # f0_dextrine=np.array(File_dict[i1]['setpoints']['Feed_dextrine_cum_setpoints']['Feed_dextrine_cum_setpoints'])
         # tf_dextrine=np.array(File_dict[i1]['setpoints']['Feed_dextrine_cum_setpoints']['setpoint_time'])/3600
         # f0_enzyme=np.array(File_dict[i1]['setpoints']['Feed_enzyme_cum_setpoints']['Feed_enzyme_cum_setpoints'])

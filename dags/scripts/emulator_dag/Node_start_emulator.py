@@ -58,10 +58,10 @@ def start_emu():
         
         tsf_glucose=EMULATOR_design[i4]['Pulses']['time_pulse']
         F_glucose=np.cumsum(EMULATOR_design[i4]['Pulses']['Feed_pulse'])
-        db_emulator[i4]['setpoints']['Feed_glucose_cum_setpoints']={'setpoint_time':{},'Feed_glucose_cum_setpoints':{}}
+        db_emulator[i4]['setpoints']['Feed_glc_cum_setpoints']={'setpoint_time':{},'Feed_glc_cum_setpoints':{}}
         for i5 in range(0,len(tsf_glucose)):
-            db_emulator[i4]['setpoints']['Feed_glucose_cum_setpoints']['setpoint_time'][str(i5)]=tsf_glucose[i5]*3600
-            db_emulator[i4]['setpoints']['Feed_glucose_cum_setpoints']['Feed_glucose_cum_setpoints'][str(i5)]=F_glucose[i5]
+            db_emulator[i4]['setpoints']['Feed_glc_cum_setpoints']['setpoint_time'][str(i5)]=tsf_glucose[i5]*3600
+            db_emulator[i4]['setpoints']['Feed_glc_cum_setpoints']['Feed_glc_cum_setpoints'][str(i5)]=F_glucose[i5]
             
         tsf_dextrine=EMULATOR_design[i4]['Pulses']['time_dextrine']
         F_dextrine=np.cumsum(EMULATOR_design[i4]['Pulses']['Feed_dextrine'])
