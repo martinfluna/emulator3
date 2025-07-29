@@ -7,8 +7,8 @@ t_duration=14.0
 
 species_list=['Xv','Glucose','Acetate','DOT','Fluo_RFP','Volume','Dextrine_S','Dextrine_R','Enzyme'] #Model species used in the model
 
-species_IC=[0.18*1,3,0,100,0,0.01,15*.45,15*.55,5] #Initial states for the species listed above
-glucose_IC=[4*0,4,4,4,4,4,4,4]*3 #Initial states for the species listed above
+species_IC=[0.18*1,3,0,100,0,0.01,15*.45,15*.55,0] #Initial states for the species listed above
+glucose_IC=[3,4,4,4,4,4,4,4]*3 #Initial states for the species listed above
 
 
 
@@ -17,7 +17,7 @@ time_dextrine=np.arange(5+10/60,t_duration,2) #Time in hours
 time_enzyme=np.arange(5+11/60,t_duration,0.5) #Time in hours
 
 
-time_samples_columns={'col1':np.arange(.99,t_duration,1).tolist()+[t_duration],'col2':np.arange(.99,t_duration,1).tolist()+[t_duration],'col3':np.arange(.99,t_duration,1).tolist()+[t_duration]} #Time in hours
+time_samples_columns={'col1':np.arange(.33,t_duration,1).tolist()+[t_duration],'col2':np.arange(.66,t_duration,1).tolist()+[t_duration],'col3':np.arange(.99,t_duration,1).tolist()+[t_duration]} #Time in hours
 sampling_rate_DOT=2/60 #Time in hours
 
 time_samples_analysis=np.arange(1,t_duration,1).tolist()
@@ -76,7 +76,7 @@ for i1 in Exp_list:
     EMULATOR_config[i1]['Inductor_conc']=float(Inductor_conc[n2])
     
     EMULATOR_config[i1]['Pulse_profile']={'time_pulse':time_pulses.tolist(),'Feed_pulse':(0+np.zeros(len(time_pulses.tolist()))).tolist(),
-                                          'time_dextrine':time_dextrine.tolist(),'Feed_dextrine':(25+np.zeros(len(time_dextrine.tolist()))).tolist(),
+                                          'time_dextrine':time_dextrine.tolist(),'Feed_dextrine':(50+np.zeros(len(time_dextrine.tolist()))).tolist(),
                                           'time_enzyme':time_enzyme.tolist(),'Feed_enzyme':(25+np.zeros(len(time_enzyme.tolist()))).tolist()}
 
     EMULATOR_config[i1]['time_sample']={}

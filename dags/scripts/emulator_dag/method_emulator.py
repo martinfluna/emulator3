@@ -159,23 +159,53 @@ def write(filename,time_initial,time_final,EMULATOR_state,EMULATOR_design,EMULAT
                     File_dict[i1]['measurements_aggregated'][i2][i2][str(i3)]=Xsf[i3]
                             
         # Feed
-        tsf=(np.array(list(File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['measurement_time'].values()))).tolist()
-        Xsf=list(File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['Cumulated_feed_volume_glucose'].values())
+        ts_pulse=(np.array(list(File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['measurement_time'].values()))).tolist()
+        F_pulse=list(File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['Cumulated_feed_volume_glucose'].values())
+        ts_dextrine=(np.array(list(File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_dextrine']['measurement_time'].values()))).tolist()
+        F_dextrine=list(File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_dextrine']['Cumulated_feed_volume_dextrine'].values())
+        ts_enzyme=(np.array(list(File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_enzyme']['measurement_time'].values()))).tolist()
+        F_enzyme=list(File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_enzyme']['Cumulated_feed_volume_enzyme'].values())
 
-        ts_new=np.array(EMULATOR_design[i1]['Pulses']['time_pulse'])#np.array(EMULATOR_state[i1]['Sample'][i2]['time'])
-        Xsf_pulses=np.array(EMULATOR_design[i1]['Pulses']['Feed_pulse'])#np.array(EMULATOR_state[i1]['Sample'][i2]['Value'])
+        ts_new_pulse=np.array(EMULATOR_design[i1]['Pulses']['time_pulse'])#np.array(EMULATOR_state[i1]['Sample'][i2]['time'])
+        F_new_pulse=np.array(EMULATOR_design[i1]['Pulses']['Feed_pulse'])#np.array(EMULATOR_state[i1]['Sample'][i2]['Value'])
+        ts_new_dextrine=np.array(EMULATOR_design[i1]['Pulses']['time_dextrine'])#np.array(EMULATOR_state[i1]['Sample'][i2]['time'])
+        F_new_dextrine=np.array(EMULATOR_design[i1]['Pulses']['Feed_dextrine'])#np.array(EMULATOR_state[i1]['Sample'][i2]['Value'])
+        ts_new_enzyme=np.array(EMULATOR_design[i1]['Pulses']['time_enzyme'])#np.array(EMULATOR_state[i1]['Sample'][i2]['time'])
+        F_new_enzyme=np.array(EMULATOR_design[i1]['Pulses']['Feed_enzyme'])#np.array(EMULATOR_state[i1]['Sample'][i2]['Value'])
         
-        Xsf_pulses_new=Xsf_pulses[(ts_new>time_initial) & (ts_new<=time_final)]
-        ts_new=ts_new[(ts_new>time_initial) & (ts_new<=time_final)].copy()
+        F_new_pulse=F_new_pulse[(ts_new_pulse>time_initial) & (ts_new_pulse<=time_final)]
+        ts_new_pulse=ts_new_pulse[(ts_new_pulse>time_initial) & (ts_new_pulse<=time_final)].copy()
+        F_new_dextrine=F_new_dextrine[(ts_new_dextrine>time_initial) & (ts_new_dextrine<=time_final)]
+        ts_new_dextrine=ts_new_dextrine[(ts_new_dextrine>time_initial) & (ts_new_dextrine<=time_final)].copy()
+        F_new_enzyme=F_new_enzyme[(ts_new_enzyme>time_initial) & (ts_new_enzyme<=time_final)]
+        ts_new_enzyme=ts_new_enzyme[(ts_new_enzyme>time_initial) & (ts_new_enzyme<=time_final)].copy()
 
-        tsf=tsf+(ts_new*3600).tolist()
-        if len(Xsf)==1:
-            last_pulse=Xsf[0]+0
-        elif len(Xsf)>1:
-            last_pulse=Xsf[-1]+0
+        ts_pulse=ts_pulse+(ts_new_pulse*3600).tolist()
+        if len(F_pulse)==1:
+            last_pulse=F_pulse[0]+0
+        elif len(F_pulse)>1:
+            last_pulse=F_pulse[-1]+0
         else:
             last_pulse=0
-        Xsf_all=Xsf+(np.cumsum(Xsf_pulses_new)+last_pulse).tolist()
+        F_pulse_all=F_pulse+(np.cumsum(F_new_pulse)+last_pulse).tolist()
+
+        ts_dextrine=ts_dextrine+(ts_new_dextrine*3600).tolist()
+        if len(F_dextrine)==1:
+            last_pulse=F_dextrine[0]+0
+        elif len(F_dextrine)>1:
+            last_pulse=F_dextrine[-1]+0
+        else:
+            last_pulse=0
+        F_dextrine_all=F_dextrine+(np.cumsum(ts_new_dextrine)+last_pulse).tolist()
+
+        ts_enzyme=ts_enzyme+(ts_new_enzyme*3600).tolist()
+        if len(F_enzyme)==1:
+            last_pulse=F_enzyme[0]+0
+        elif len(F_enzyme)>1:
+            last_pulse=F_enzyme[-1]+0
+        else:
+            last_pulse=0
+        F_enzyme_all=Xsf+(np.cumsum(F_new_enzyme)+last_pulse).tolist()
             
         File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['measurement_time']={}
         File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['Cumulated_feed_volume_glucose']={}
@@ -183,15 +213,15 @@ def write(filename,time_initial,time_final,EMULATOR_state,EMULATOR_design,EMULAT
         File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_dextrine']['Cumulated_feed_volume_dextrine']={}
         File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_enzyme']['measurement_time']={}
         File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_enzyme']['Cumulated_feed_volume_enzyme']={}
-        for i3 in range(0,len(tsf)):
-            File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['measurement_time'][str(i3)]=tsf[i3]+0
-            File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['Cumulated_feed_volume_glucose'][str(i3)]=Xsf_all[i3]+0
-        for i3 in range(0,len(tsf)):
-            File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['measurement_time'][str(i3)]=tsf[i3]+0
-            File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['Cumulated_feed_volume_glucose'][str(i3)]=Xsf_all[i3]+0
-        for i3 in range(0,len(tsf)):
-            File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['measurement_time'][str(i3)]=tsf[i3]+0
-            File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['Cumulated_feed_volume_glucose'][str(i3)]=Xsf_all[i3]+0
+        for i3 in range(0,len(ts_pulse)):
+            File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['measurement_time'][str(i3)]=ts_pulse[i3]+0
+            File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['Cumulated_feed_volume_glucose'][str(i3)]=F_pulse_all[i3]+0
+        for i3 in range(0,len(ts_dextrine)):
+            File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_dextrine']['measurement_time'][str(i3)]=ts_dextrine[i3]+0
+            File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_dextrine']['Cumulated_feed_volume_dextrine'][str(i3)]=F_dextrine_all[i3]+0
+        for i3 in range(0,len(ts_enzyme)):
+            File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_enzyme']['measurement_time'][str(i3)]=ts_enzyme[i3]+0
+            File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_enzyme']['Cumulated_feed_volume_enzyme'][str(i3)]=F_enzyme_all[i3]+0
         
     
     with open(filename, "w") as outfile:

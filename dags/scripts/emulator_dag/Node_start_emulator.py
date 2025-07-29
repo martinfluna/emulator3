@@ -60,21 +60,21 @@ def start_emu():
         F_glucose=np.cumsum(EMULATOR_design[i4]['Pulses']['Feed_pulse'])
         db_emulator[i4]['setpoints']['Feed_glucose_cum_setpoints']={'setpoint_time':{},'Feed_glucose_cum_setpoints':{}}
         for i5 in range(0,len(tsf_glucose)):
-            db_emulator[i4]['setpoints']['Feed_glucose_cum_setpoints']['setpoint_time'][str(i5)]=tsf_glucose[i5]
+            db_emulator[i4]['setpoints']['Feed_glucose_cum_setpoints']['setpoint_time'][str(i5)]=tsf_glucose[i5]*3600
             db_emulator[i4]['setpoints']['Feed_glucose_cum_setpoints']['Feed_glucose_cum_setpoints'][str(i5)]=F_glucose[i5]
             
         tsf_dextrine=EMULATOR_design[i4]['Pulses']['time_dextrine']
         F_dextrine=np.cumsum(EMULATOR_design[i4]['Pulses']['Feed_dextrine'])
         db_emulator[i4]['setpoints']['Feed_dextrine_cum_setpoints']={'setpoint_time':{},'Feed_dextrine_cum_setpoints':{}}
         for i5 in range(0,len(tsf_dextrine)):
-            db_emulator[i4]['setpoints']['Feed_dextrine_cum_setpoints']['setpoint_time'][str(i5)]=tsf_dextrine[i5]
+            db_emulator[i4]['setpoints']['Feed_dextrine_cum_setpoints']['setpoint_time'][str(i5)]=tsf_dextrine[i5]*3600
             db_emulator[i4]['setpoints']['Feed_dextrine_cum_setpoints']['Feed_dextrine_cum_setpoints'][str(i5)]=F_dextrine[i5]
             
         tsf_enzyme=EMULATOR_design[i4]['Pulses']['time_enzyme']
         F_enzyme=np.cumsum(EMULATOR_design[i4]['Pulses']['Feed_enzyme'])
         db_emulator[i4]['setpoints']['Feed_enzyme_cum_setpoints']={'setpoint_time':{},'Feed_enzyme_cum_setpoints':{}}
         for i5 in range(0,len(tsf_enzyme)):
-            db_emulator[i4]['setpoints']['Feed_enzyme_cum_setpoints']['setpoint_time'][str(i5)]=tsf_enzyme[i5]
+            db_emulator[i4]['setpoints']['Feed_enzyme_cum_setpoints']['setpoint_time'][str(i5)]=tsf_enzyme[i5]*3600
             db_emulator[i4]['setpoints']['Feed_enzyme_cum_setpoints']['Feed_enzyme_cum_setpoints'][str(i5)]=F_enzyme[i5]
 
     with open('db_emulator.json', "w") as outfile:
