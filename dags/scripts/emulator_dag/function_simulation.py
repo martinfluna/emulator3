@@ -37,7 +37,7 @@ def function_simulation(ts0,Xo0,u0,THs,D0={}):
 
     
     
-    time_u_concat=np.concat((t_u_pulse,t_u_sample,t_u_dextrine,t_u_enzyme,t_u_medium))
+    time_u_concat=np.concatenate((t_u_pulse,t_u_sample,t_u_dextrine,t_u_enzyme,t_u_medium))
     t_u=np.unique(time_u_concat)    
     # t_u=np.unique(time_u_concat)
 

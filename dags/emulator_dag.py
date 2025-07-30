@@ -8,6 +8,7 @@ from airflow.utils.task_group import TaskGroup
 from airflow import AirflowException
 from docker.types import Mount
 
+
 try:
     host_path = Variable.get("host_path", deserialize_json=True)
 except:
@@ -40,8 +41,7 @@ def base_docker_node(task_id, command, retries=3, retry_delay=dt.timedelta(minut
         command=command,
         mounts=[Mount(source=host_path, target=remote_path, type='bind')],
         mount_tmp_dir=False,
-        # network_mode="bridge",
-        network_mode='emulator2_default',#"bridge",
+        network_mode='emulator3_default',#"bridge",
         retries=retries,
         retry_delay=retry_delay,
         execution_timeout=execution_timeout,
@@ -73,24 +73,17 @@ with DAG(
         command=["python", "-c", "from database_connector import save_start_time; save_start_time()"],
     )
 
-    with TaskGroup(group_id=f"initial_feeds"):
-        create_feeds = base_docker_node(
-            task_id=f"create_feeds",
-            command=["python", "-c", "from database_connector import create_feed_json; create_feed_json('../../results/623/feed/feed_0.json','EMULATOR_config.json')"],
-        ) 
+    save_feeds = base_docker_node(
+        task_id=f"save_feeds",
+        command=["python", "-c", "from database_connector import save_multi_actions; save_multi_actions(623, 'db_emulator.json')"]
+    ) 
 
-        save_feeds = base_docker_node(
-            task_id=f"save_feeds",
-            command=["python", "-c", "from database_connector import save_actions; save_actions(623, '../../results/623/feed/feed_0.json')"]
-        ) 
+    get_feeds = base_docker_node(
+        task_id=f"get_feeds",
+        command=["python", "-c", "from database_connector import get_feeds; get_feeds(623)"],
+    )
 
-        get_feeds = base_docker_node(
-            task_id=f"get_feeds",
-            command=["python", "-c", "from database_connector import get_feeds; get_feeds()"],
-        )
-
-
-    clean_db >> start_emu >> save_start_time >> create_feeds >> save_feeds >> get_feeds
+    clean_db >> start_emu >> save_start_time >> save_feeds >> get_feeds
     last_node = get_feeds
 
 
@@ -112,7 +105,7 @@ with DAG(
             command=["python", "-c", "from database_connector import query_and_save; query_and_save(623, 'db_output.json')"],
         )
 
-        get_feeds >> run_emu >> save_measurements >> get_measurements
+        last_node >> run_emu >> save_measurements >> get_measurements
 
     # ----------------------------- iterations ---------------------------------
     else:
@@ -141,7 +134,7 @@ with DAG(
 
                     get_feeds = base_docker_node(
                         task_id=f"get_feeds_{hours * 60 + minutes}_min",
-                        command=["python", "-c", "from database_connector import get_feeds; get_feeds()"],
+                        command=["python", "-c", "from database_connector import get_feeds; get_feeds(623)"],
                     )
 
                     run_emu = base_docker_node(

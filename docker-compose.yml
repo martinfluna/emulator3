@@ -293,7 +293,7 @@ services:
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
     volumes:
       - ./images/ilabdb/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - mysql-db-volume:/var/lib/mysql
+      - mysql-db-volume-emu3:/var/lib/mysql
   
   emulator2:
     image: emulator2
@@ -313,5 +313,5 @@ services:
 
 volumes:
   postgres-db-volume:
-  mysql-db-volume:
+  mysql-db-volume-emu3:
 

@@ -255,7 +255,7 @@ if __name__ == "__main__":
                                     text_auto=True
                                     )
                     st.plotly_chart(fig)
-                except KeyError as e:
+                except Exception as e:
                     st.text(f"{e} not in selected dataset")
             with col2:
                 st.dataframe(id_df)

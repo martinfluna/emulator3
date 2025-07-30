@@ -9,7 +9,7 @@ import sys
 
 
 def get_connection_url():
-    host = "mysql"#"host.docker.internal"
+    host = "mysql" #"host.docker.internal"
     port = "3306"
     user = "dbuser"
     password = "dbpassword123"
@@ -119,7 +119,8 @@ def save_measurements():
 
     # TODO: check measurement harcoded array  
     measurement_types = ["OD600", "DOT", "Acetate", "Glucose", "Fluo_RFP", "Volume", "Temperature", "Flow_Air", "StirringSpeed", "Acid", "Base", 
-                    "Cumulated_feed_volume_glucose", "Cumulated_feed_volume_medium", "Fluo_CFP", "Probe_Volume", "Volume_evaporated", "pH"]
+                    "Cumulated_feed_volume_glucose", "Cumulated_feed_volume_medium", "Fluo_CFP", "Probe_Volume", "Volume_evaporated", "pH",
+                    "Cumulated_feed_volume_dextrine", "Cumulated_feed_volume_enzyme"]
     
     conn = engine.connect() 
 
@@ -150,42 +151,31 @@ def save_measurements():
     conn.close()
 
 
-def get_feeds():
+def get_feeds(runID):
     """
     Get feeds profile for all the MBRs
     """
-    
-    conn = engine.connect() 
 
     # get all the measurements from file
     with open('db_emulator.json', "r") as file:
         mbrs_measurements = json.load(file) 
         file.close()
 
-    # TODO update template profile ids
-    profile_ids = tuple(range(13763, 13786 + 1))
-    # profile_ids = [mbrs_measurements[exp_id]["metadata"]["profile_id"]["0"] for exp_id in mbrs_measurements]
+    # get setpoints
+    setpoints_groups_df = get_setpoints(runID, engine)
 
-    sql_query = f"""SELECT setpoint_id, profile_id, cultivation_age, setpoint_value AS 'Feed_glc_cum_setpoints' 
-                    FROM setpoints WHERE profile_id IN {profile_ids} AND variable_type_id=99"""
-    new_setpoints = pd.read_sql(sql_query, conn)
-    conn.close()
+    # iterate setpoints groups
+    for (exp_id, variable), group in setpoints_groups_df:
+        # rename column by variable type
+        group.rename(columns={"setpoint_value": variable, "cultivation_age": "setpoint_time"}, inplace=True)
 
-    # TODO: check if there are 11 extra data in setpoints into every exp_id (start from 11th value)
-    for index, exp_id in enumerate(mbrs_measurements):
+        # Reset index: to start from 0 for each measurement count of the original dataframe
+        mbrs_measurements[str(exp_id)]["setpoints"][variable] = json.loads(group.reset_index()[["setpoint_time", variable]].to_json())
 
-        setpoints_df = pd.DataFrame.from_dict(mbrs_measurements[exp_id]["setpoints"]).replace(np.nan, None)
-        setpoints_df.index = setpoints_df.index.astype("int") 
-        setpoints_df.sort_index(inplace=True)
-
-        # concatenates first 11 values from other setpoint data with new profile setpoints
-        updated_setpoints_df = pd.concat([setpoints_df[:11], new_setpoints[new_setpoints["profile_id"] == profile_ids[index]][["setpoint_id","cultivation_age","Feed_glc_cum_setpoints"]]], ignore_index=True).replace(np.nan, None)
-        updated_setpoints_df.index = updated_setpoints_df.index.astype("string")
-        mbrs_measurements[exp_id]["setpoints"].update(updated_setpoints_df.to_dict())
     
-    # with open('db_emulator.json', "w") as file:
-    #     json.dump(mbrs_measurements, file) 
-    #     file.close()
+    with open('db_emulator.json', "w") as file:
+        json.dump(mbrs_measurements, file) 
+        file.close()
 
 
 def create_feed_json(filename_db, filename_feed):
@@ -257,6 +247,24 @@ def get_measurements(runID, engine):
     return res_df.groupby(["experiment_id", "canonical_name"]) if res_df.shape[0] else res_df
 
 
+def get_exp_ids(runID, engine):
+    """
+    Get all exp_ids for a runID from the database.
+    """
+
+    sql_setpoints = f"""
+        SELECT exp.experiment_id 
+        FROM bioreactors bio
+        INNER JOIN runs ON bio.run_id = runs.run_id 
+        INNER JOIN experiments exp ON bio.bioreactor_id = exp.bioreactor_id
+        WHERE runs.run_id = {runID}
+    """
+    conn = engine.connect()
+    res = conn.execute(sqlalchemy.text(sql_setpoints))
+    conn.close()
+
+    return pd.DataFrame(res)["experiment_id"]
+
 def get_setpoints(runID, engine):
     """
     Get all the setpoints for a runID from the database. Grouped by (exp_id, setpoints)
@@ -293,8 +301,15 @@ def read_run(runID):
     
     # get metadata
     metadata_df = get_metadata(runID, engine)
-    # metadata_df["start_time"]
 
+    # create template
+    exp_ids = get_exp_ids(runID, engine)
+    for exp_id in exp_ids:
+        json_data[exp_id] = {
+            "metadata": {}, 
+            "setpoints": {},
+            "measurements_aggregated": {}}
+        
     # get setpoints
     setpoints_groups_df = get_setpoints(runID, engine)
      
@@ -304,14 +319,11 @@ def read_run(runID):
     # iterate setpoints groups
     for (exp_id, variable), group in setpoints_groups_df:
         # rename column by variable type
-        group.rename(columns={"setpoint_value": variable}, inplace=True)
+        group.rename(columns={"setpoint_value": variable, "cultivation_age": "setpoint_time"}, inplace=True)
 
-        # init template for each exp id. Add setpoint as json with 11 null values. 
         # Reset index: to start from 0 for each measurement count of the original dataframe
-        json_data[exp_id] = {
-            "metadata": {}, 
-            "setpoints": json.loads(group.reset_index()[["cultivation_age", variable]].shift(periods=11).to_json()), 
-            "measurements_aggregated": {}}
+        json_data[exp_id]["setpoints"][variable] = json.loads(group.reset_index()[["setpoint_time", variable]].to_json())
+
         
     # iterate measurements groups
     for (exp_id, variable), group in measurements_groups_df:
@@ -404,7 +416,7 @@ def delete_setpoints(connection, runID, exp_id, from_time = 0, type_id = 99):
     connection.execute(sqlalchemy.text(query))
 
 
-def add_setpoints(connection, runID, exp_id, setpoint_df, type_id = 99):
+def add_setpoints(connection, runID, exp_id, setpoint_df, type_id = 99, type_name = "Feed_glc_cum_setpoints"):
     """
     Adds setpoints to a given experiment (runID) in a specific position (profile_name).
 
@@ -424,7 +436,8 @@ def add_setpoints(connection, runID, exp_id, setpoint_df, type_id = 99):
     """
     profiles = run2ids(connection, runID)
     profile_id = profiles.loc[profiles['experiment_id'] == exp_id]['profile_id'].iloc[0]
-    setpoint_df.rename(columns={'measurement_time': 'cultivation_age'}, inplace=True)
+    setpoint_df.rename(columns={'setpoint_time': 'cultivation_age'}, inplace=True)
+    setpoint_df.rename(columns={type_name: 'setpoint_value'}, inplace=True)
     setpoint_df['profile_id'] = profile_id
     setpoint_df['variable_type_id'] = type_id
     setpoint_df['scope'] = 'e'
@@ -452,6 +465,31 @@ def save_actions(runID, file_path):
             for exp_id in setpoints_df:
                 delete_setpoints(connection, runID, int(exp_id))
                 add_setpoints(connection, runID, int(exp_id), setpoints_df[exp_id])
+
+
+def save_multi_actions(runID, file_path):
+    """
+    Main function to save all setpoints profiles for MBRs from file.
+    """
+
+    with open(file_path, "r") as file:
+        feed = json.load(file)
+        file.close()
+
+    variable_types = [(99, "Feed_glc_cum_setpoints"), (112, "Feed_enzyme_cum_setpoints"), (131, "Feed_dextrine_cum_setpoints")]
+
+    # delete setpoint and add new values for each exp_id (mbr)
+    with engine.connect() as connection:
+        with connection.begin():
+            for exp_id in feed:
+
+                # delete/add data for each variable type
+                for type_id, type_name in variable_types:
+
+                    setpoint_df = pd.DataFrame.from_dict(feed[exp_id]["setpoints"][type_name])
+
+                    delete_setpoints(connection, runID, int(exp_id), 0, type_id)
+                    add_setpoints(connection, runID, int(exp_id), setpoint_df, type_id, type_name)
 
 
 # **********************************************************************************

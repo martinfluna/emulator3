@@ -1987,7 +1987,107 @@ INSERT INTO ilabdb.variable_types (variable_type_id,canonical_name,display_name,
 	 (144,'Fluo_FbFP','Fluo_FbFP','RFU',NULL,NULL),
 	 (145,'nanobody_total','nanobody_total','g/L',0.000000000000,NULL);
 INSERT INTO ilabdb.variable_types (variable_type_id,canonical_name,display_name,unit,lower_limit,upper_limit) VALUES
-	 (146,'nanobody_extracellular','nanobody_extracellular','g/L',0.000000000000,NULL);
+	 (146,'nanobody_extracellular','nanobody_extracellular','g/L',0.000000000000,NULL),
+   (147,'raman_spectrum','raman_spectrum','counts',0.000000000000,65536.000000000000),
+	 (148,'Puls_Ion_1','Puls_Ion_1','µL',0.000000000000,NULL),
+	 (149,'Ion_1_addition','Ion_1_addition','µL',0.000000000000,NULL),
+	 (150,'Pullulanase_addition','Pullulanase_addition','µL',0.000000000000,NULL),
+	 (151,'Pullulanase_concentration','Pullulanase_concentration','U/L',0.000000000000,NULL),
+	 (152,'Amylose_concentration','Amylose_concentration','g/L',0.000000000000,NULL),
+	 (153,'Puls_Pullulanase','Puls_Pullulanase','µL',0.000000000000,NULL),
+	 (154,'fructose','fructose','g/L',0.000000000000,1000000.000000000000),
+	 (155,'Sodium_Acetate','Sodium_Acetate','g/L',0.000000000000,1000000.000000000000);
+INSERT INTO ilabdb.variable_types (variable_type_id,canonical_name,display_name,unit,lower_limit,upper_limit) VALUES
+	 (156,'Ammonium_Chloride','Ammonium_Chloride','g/L',0.000000000000,1000000.000000000000),
+	 (157,'Dipotassium_Phosphate','Dipotassium_Phosphate','g/L',0.000000000000,1000000.000000000000),
+	 (158,'Di-Ammonium_Hydrogen_Citrate','Di-Ammonium_Hydrogen_Citrate','g/L',0.000000000000,1000000.000000000000),
+	 (159,'Yeast_Extract','Yeast_Extract','g/L',0.000000000000,1000000.000000000000),
+	 (160,'Sodium_Chloride','Sodium_Chloride','g/L',0.000000000000,1000000.000000000000),
+	 (161,'Magnesium_Chloride','Magnesium_Chloride','g/L',0.000000000000,1000000.000000000000),
+	 (162,'Calcium_Chloride','Calcium_Chloride','g/L',0.000000000000,1000000.000000000000),
+	 (163,'Potassium_Chloride','Potassium_Chloride','g/L',0.000000000000,1000000.000000000000),
+	 (164,'Sodium_Bicarbonate','Sodium_Bicarbonate','g/L',0.000000000000,1000000.000000000000),
+	 (165,'Sodium_Sulfate','Sodium_Sulfate','g/L',0.000000000000,1000000.000000000000);
+INSERT INTO ilabdb.variable_types (variable_type_id,canonical_name,display_name,unit,lower_limit,upper_limit) VALUES
+	 (166,'Docosahexaenoic_Acid','Docosahexaenoic_Acid','g/L',0.000000000000,1000000.000000000000),
+	 (167,'Feed_glycerol_cum_setpoints','Feed_glycerol_cum_setpoints','µL',0.000000000000,NULL),
+	 (168,'Cumulated_feed_volume_glycerol','Cumulated_feed_volume_glycerol','µL',0.000000000000,NULL),
+	 (169,'Feed_gly_v2_cum_setpoints','Feed_gly_v2_cum_setpoints','µL',0.000000000000,NULL),
+	 (170,'Cumulated_feed_volume_gly_v2','Cumulated_feed_volume_gly_v2','µL',0.000000000000,NULL),
+	 (171,'DCW','DCW','g/L',0.000000000000,10000.000000000000),
+	 (172,'OD492','OD492','-',0.000000000000,10000.000000000000),
+	 (173,'ethanol','ethanol','volume_percent',0.000000000000,100.000000000000),
+	 (174,'Sulfate','Sulfate','g/L',0.000000000000,1000000000.000000000000),
+	 (175,'Magnesium_Sulfate','Magnesium_Sulfate','g/L',0.000000000000,1000000000.000000000000);
+INSERT INTO ilabdb.variable_types (variable_type_id,canonical_name,display_name,unit,lower_limit,upper_limit) VALUES
+	 (176,'Iron','Iron','g/L',0.000000000000,NULL),
+	 (177,'nitrate_reductase_activity','nitrate_reductase_activity',NULL,0.000000000000,NULL),
+	 (178,'Feed_S_mix_cum_setpoints','Feed_S_mix_cum_setpoints','µL',0.000000000000,NULL),
+	 (179,'Cumulated_feed_volume_S_mix','Cumulated_feed_volume_S_mixl','µL',0.000000000000,NULL),
+	 (183,'Nitrate','Nitrate','g/L',0.000000000000,NULL),
+	 (184,'OD600_of_pellet','OD600_of_pellet','1',-1000000000.000000000000,1000000000.000000000000),
+	 (185,'raman_measures_air','raman_measures_air','flag',0.000000000000,1.000000000000),
+	 (186,'raman_low_intensity','raman_low_intensity','flag',0.000000000000,1.000000000000),
+	 (187,'Antifoam','Antifoam','g/L',-1000000000.000000000000,1000000000.000000000000),
+	 (188,'contains_MSM','contains_MSM','-',-1000000000.000000000000,1000000000.000000000000);
+INSERT INTO ilabdb.variable_types (variable_type_id,canonical_name,display_name,unit,lower_limit,upper_limit) VALUES
+	 (189,'pH_over_13','pH_over_13','-',-1000000000.000000000000,1000000000.000000000000),
+	 (190,'Dextrin','Dextrin','g/L',-1000000000.000000000000,1000000000.000000000000),
+	 (191,'EnPump','EnPump','g/L',-1000000000.000000000000,1000000000.000000000000),
+	 (192,'Cumulated_feed_volume_YE','Cumulated_feed_volume_YE','µL',0.000000000000,NULL),
+	 (193,'Feed_YE_cum_setpoints','Feed_YE_cum_setpoints','µL',0.000000000000,NULL),
+	 (194,'antigen_intracellular','antigen_intracellular','µg/mL',0.000000000000,NULL),
+	 (195,'total_phosphate','total_phosphate','g/L',-1000000000.000000000000,1000000000.000000000000),
+	 (196,'potassium_hydrogen_phosphate','potassium_hydrogen_phosphate','g/L',-1000000000.000000000000,1000000000.000000000000),
+	 (197,'sodium_dihydrogen_phosphate','sodium_dihydrogen_phosphate','g/L',-1000000000.000000000000,1000000000.000000000000),
+	 (198,'total_sulfate','total_sulfate','g/L',-1000000000.000000000000,1000000000.000000000000);
+INSERT INTO ilabdb.variable_types (variable_type_id,canonical_name,display_name,unit,lower_limit,upper_limit) VALUES
+	 (199,'Ammonium_Sulfate','Ammonium_Sulfate','g/L',-1000000000.000000000000,1000000000.000000000000),
+	 (200,'Humidity','Humidity','%',0.000000000000,100.000000000000),
+	 (201,'Lactate','Lactate','g/L',0.000000000000,1000.000000000000),
+	 (203,'Feed_glc_v2_cum_setpoints','Feed_glc_v2_cum_setpoints','µL',0.000000000000,NULL),
+	 (204,'Cumulated_feed_volume_glc_v2','Cumulated_feed_volume_glc_v2','µL',0.000000000000,NULL),
+	 (205,'Feed_glc_v3_cum_setpoints','Feed_glc_v3_cum_setpoints','µL',0.000000000000,NULL),
+	 (206,'Cumulated_feed_volume_glc_v3','Cumulated_feed_volume_glc_v3','µL',0.000000000000,NULL),
+	 (207,'Feed_lac_cum_setpoints','Feed_lac_cum_setpoints','µL',0.000000000000,NULL),
+	 (208,'Cumulated_feed_volume_lactose','Cumulated_feed_volume_lactose','µL',0.000000000000,NULL),
+	 (211,'Feed_lac_v2_cum_setpoints','Feed_lac_v2_cum_setpoints','µL',0.000000000000,NULL);
+INSERT INTO ilabdb.variable_types (variable_type_id,canonical_name,display_name,unit,lower_limit,upper_limit) VALUES
+	 (212,'Cumulated_feed_volume_lac_v2','Cumulated_feed_volume_lac_v2','µL',0.000000000000,NULL),
+	 (213,'Ammonium','Ammonium','g/L',0.000000000000,1000.000000000000),
+	 (214,'Glutamine','Glutamine','g/L',0.000000000000,1000000000.000000000000),
+	 (215,'Cysteine','Cysteine','g/L',0.000000000000,1000000000.000000000000),
+	 (216,'Threonine','Threonine','g/L',0.000000000000,1000000000.000000000000),
+	 (217,'Tryptophan','Tryptophan','g/L',0.000000000000,1000000000.000000000000),
+	 (218,'Tyrosine','Tyrosine','g/L',0.000000000000,1000000000.000000000000),
+	 (219,'HEPES','HEPES','g/L',0.000000000000,1000000000.000000000000),
+	 (220,'Antibody','Antibody','g/L',0.000000000000,1000000000.000000000000),
+	 (221,'AMP','AMP','mmol',-1000000000.000000000000,1000000000.000000000000);
+INSERT INTO ilabdb.variable_types (variable_type_id,canonical_name,display_name,unit,lower_limit,upper_limit) VALUES
+	 (222,'ADP','ADP','mmol',-1000000000.000000000000,1000000000.000000000000),
+	 (223,'ATP','ATP','mmol',-1000000000.000000000000,1000000000.000000000000),
+	 (224,'Adenosin','Adenosin','mmol',-1000000000.000000000000,1000000000.000000000000),
+	 (225,'GMP','GMP','mmol',-1000000000.000000000000,1000000000.000000000000),
+	 (226,'UMP','UMP','mmol',-1000000000.000000000000,1000000000.000000000000),
+	 (227,'UDP','UDP','mmol',-1000000000.000000000000,1000000000.000000000000),
+	 (228,'Uridin','Uridin','mmol',-1000000000.000000000000,1000000000.000000000000),
+	 (229,'GDP','GDP','mmol',-1000000000.000000000000,1000000000.000000000000),
+	 (230,'GTP','GTP','mmol',-1000000000.000000000000,1000000000.000000000000),
+	 (231,'Astaxanthin','Astaxanthin','mg/L',0.000000000000,NULL);
+INSERT INTO ilabdb.variable_types (variable_type_id,canonical_name,display_name,unit,lower_limit,upper_limit) VALUES
+	 (232,'Feed_glc_v4_cum_setpoints','Feed_glc_v4_cum_setpoints','µL',0.000000000000,NULL),
+	 (233,'Feed_glc_v5_cum_setpoints','Feed_glc_v5_cum_setpoints','µL',0.000000000000,NULL),
+	 (234,'Cumulated_feed_volume_glc_v4','Cumulated_feed_volume_glc_v4','µL',0.000000000000,NULL),
+	 (235,'Cumulated_feed_volume_glc_v5','Cumulated_feed_volume_glc_v5','µL',0.000000000000,NULL),
+	 (238,'antibody_1','antibody_1','µg/mL',-1000000000.000000000000,1000000000.000000000000),
+	 (240,'Antibody_type1','Antibody_type1','µg/mL',-1000000000.000000000000,1000000000.000000000000),
+	 (241,'Antibody_type2','Antibody_type2','µg/mL',-1000000000.000000000000,1000000000.000000000000),
+	 (242,'Puls_Magnesium','Puls_Magnesium','µL',0.000000000000,NULL),
+	 (243,'Magnesium_addition','Magnesium_addition','µL',0.000000000000,NULL),
+	 (244,'Magnesium sulfate','Magnesium sulfate','g/L',-1000000000.000000000000,1000000000.000000000000);
+INSERT INTO ilabdb.variable_types (variable_type_id,canonical_name,display_name,unit,lower_limit,upper_limit) VALUES
+	 (245,'Antibody_type3','Antibody_type3','µg/mL',-1000000000.000000000000,1000000000.000000000000),
+	 (246,'Cumulated_feed_volume_enzyme','Cumulated_feed_volume_enzyme','µL',0.000000000000,NULL);
 
 INSERT INTO ilabdb.measuring_setup (measuring_setup_id,run_id,`scope`,variable_type_id,device_id,analysis_method_id) VALUES
 	 (5920,623,'b',1,NULL,NULL),
@@ -2024,4 +2124,5 @@ INSERT INTO ilabdb.measuring_setup (measuring_setup_id,run_id,`scope`,variable_t
 	 (6361,623,'e',130,NULL,NULL);
 INSERT INTO ilabdb.measuring_setup (measuring_setup_id,run_id,`scope`,variable_type_id,device_id,analysis_method_id) VALUES
 	 (6371,623,'e',132,NULL,NULL),
-	 (6370,623,'e',133,NULL,NULL);
+	 (6370,623,'e',133,NULL,NULL),
+	 (6372,623,'e',246,NULL,NULL);
