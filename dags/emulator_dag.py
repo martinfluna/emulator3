@@ -13,7 +13,7 @@ try:
     host_path = Variable.get("host_path", deserialize_json=True)
 except:
     print("Host path has not been addded to the airflow UI variables or it has not been done correctly!")
-    host_path = "/home/ml/Git-CONICET/Emulator/emulator2/dags"
+    # host_path = "/home/ml/Git-CONICET/Emulator/emulator3/dags"
 
 remote_path = "/opt/airflow/dags"
 

@@ -39,8 +39,8 @@ Params_ref=np.array([1.2578, 0.43041, 0.6439,  7.0767,  0.4063,  0.1143*4,  0.18
 Params={}
 
 for i in range(mbr_list.shape[0]):
-    Params_ref_row=(Params_ref*(1+0.66*(np.random.random(len(Params_ref))-.5)/2)).tolist()
-    Params[i]=Params_ref_row+(850*(1+0.66*(np.random.random(1)-.5)/2)).tolist()+(90*(1+0.66*(np.random.random(1)-.5)/2)).tolist()
+    Params_ref_row=(Params_ref*(1+0.33*(np.random.random(len(Params_ref))-.5)/2)).tolist()
+    Params[i]=Params_ref_row+(850*(1+0.33*(np.random.random(1)-.5)/2)).tolist()+(90*(1+0.66*(np.random.random(1)-.5)/2)).tolist()
 
 time_execution=[]#np.arange(0,t_duration+1,1).tolist()# # leave empty for Real Time, otherwise use time in hours
 

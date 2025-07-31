@@ -21,7 +21,7 @@ def run_emu():
         time_initial_absolute=EMULATOR_state['time_absolute']
         time_start_absolute=EMULATOR_design['time_start_absolute']
         time_initial=EMULATOR_config['acceleration']*(time_initial_absolute-time_start_absolute)/3600
-        time_final=EMULATOR_config['acceleration']*(time_final_absolute-time_start_absolute)/3600
+        time_final=min(EMULATOR_config['acceleration']*(time_final_absolute-time_start_absolute)/3600,EMULATOR_config['experiment_duration'])
         
     else:
         time_initial=float(EMULATOR_config['time_execution'][EMULATOR_state['iter']])
