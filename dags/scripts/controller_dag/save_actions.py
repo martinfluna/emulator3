@@ -3,6 +3,15 @@ import pandas as pd
 import sqlalchemy
 import json
 
+def get_connection_url():
+    host = "mysql" #"host.docker.internal"
+    port = "3306"
+    user = "dbuser"
+    password = "dbpassword123"
+    database = "ilabdb"
+    
+    return f'mysql+mysqlconnector://{user}:{password}@{host}:{port}/{database}'
+
 
 def run2ids(connection, runID):
     """
@@ -94,10 +103,11 @@ if __name__ == '__main__':
     # file_path = f"dags/results/623/feed/feed_0.json"
     # exp_ids = [exp_id for exp_id in range(19419, 19423)]
 
-    if runID == 623:
-        db = 'mysql+mysqlconnector://dbuser:dbpassword123@host.docker.internal:3306/ilabdb'
-    else:
-        db = 'mysql+mysqlconnector://Autobio:bvt1autobio!@ht-server.bioprocess.tu-berlin.de:3306/ilabdb'
+    # if runID == 623:
+    #     db = 'mysql+mysqlconnector://dbuser:dbpassword123@host.docker.internal:3306/ilabdb'
+    # else:
+    #     db = 'mysql+mysqlconnector://Autobio:bvt1autobio!@ht-server.bioprocess.tu-berlin.de:3306/ilabdb'
+    db = get_connection_url()
 
     engine = sqlalchemy.create_engine(db, echo=False)
 

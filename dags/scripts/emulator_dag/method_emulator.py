@@ -205,7 +205,7 @@ def write(filename,time_initial,time_final,EMULATOR_state,EMULATOR_design,EMULAT
             last_pulse=F_enzyme[-1]+0
         else:
             last_pulse=0
-        F_enzyme_all=Xsf+(np.cumsum(F_new_enzyme)+last_pulse).tolist()
+        F_enzyme_all=F_enzyme+(np.cumsum(F_new_enzyme)+last_pulse).tolist()
             
         File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['measurement_time']={}
         File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['Cumulated_feed_volume_glucose']={}

@@ -3,8 +3,8 @@ import sys
 import pandas as pd
 from db_loader import read_run
 
-runID = int(sys.argv[1])
-filepath = sys.argv[2]
+runID = 623#int(sys.argv[1])
+filepath ='db_output.json'# sys.argv[2]
 rootdir = os.getcwd()
 
 db_json = read_run(runID)

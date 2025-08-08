@@ -50,7 +50,7 @@ def base_docker_node(task_id, command, retries=3, retry_delay=dt.timedelta(minut
 
 
 with DAG(
-        dag_id="Emulator_2.0_DAG",
+        dag_id="Emulator_3.0_DAG",
         description="Kiwi experiment emulator.",
         start_date=dt.datetime.now(),
         schedule_interval=None,

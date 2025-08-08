@@ -53,7 +53,7 @@ def start_emu():
     with open('EMULATOR_design.json', "w") as outfile:
         json.dump(EMULATOR_design, outfile) 
         
-# %%  
+# %%  Write profiles to db_emulator
     for i4 in brxtor_list:
         
         tsf_glucose=EMULATOR_design[i4]['Pulses']['time_pulse']
