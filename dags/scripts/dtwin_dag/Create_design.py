@@ -44,7 +44,7 @@ for i in range(mbr_list.shape[0]):
 
 time_execution=[]#np.arange(0,t_duration+1,1).tolist()# # leave empty for Real Time, otherwise use time in hours
 
-acceleration=54000# =1 for real time, or choose between [2, 4, 60, 54000]
+acceleration=4# =1 for real time, or choose between [2, 4, 60, 54000]
 
 # %% Create & Fill config file
 DTWIN_config={}

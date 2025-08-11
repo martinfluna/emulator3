@@ -22,26 +22,28 @@ def update_group(mbr_list):
         DTWIN_design = json.load(json_file)
     with open('DTWIN_config.json') as json_file:   
         DTWIN_config = json.load(json_file)
-    with open('db_dtwin.json') as json_file:   
+    with open('db_output.json') as json_file:   
         db_output = json.load(json_file)
     
     Data=get_data(db_output,mbr_list)
     
     time_final_absolute=time.time()
     time_final=min(DTWIN_config['acceleration']*(time_final_absolute-DTWIN_design['time_start_absolute'])/3600,DTWIN_config['experiment_duration'])  
-    time_final=DTWIN_config['experiment_duration']
+    # time_final=DTWIN_config['experiment_duration']
 
     
-    New_param=optimize_param(mbr_list,time_final,Data,DTWIN_config,DTWIN_design,DTWIN_state,optim_options=[10, 10])
+    New_param=optimize_param(mbr_list,time_final,Data,DTWIN_config,DTWIN_design,DTWIN_state,optim_options=[3, 3])
     
     NEW_DTWIN_config,NEW_DTWIN_state=simulate(New_param,mbr_list,time_final,Data,DTWIN_config,DTWIN_design,DTWIN_state,mode_sim=2)
 
     WR=method_dtwin.write('db_dtwin2.json',0,time_final,NEW_DTWIN_state,DTWIN_design,NEW_DTWIN_config)
 
+    nn_new=0
     for i1 in mbr_list:
         nn=DTWIN_config['Brxtor_list'].index(i1)
-        DTWIN_config['Params'][str(nn)]=NEW_DTWIN_config['Params'][str(nn)]
+        DTWIN_config['Params'][str(nn)]=NEW_DTWIN_config['Params'][str(nn_new)]
         DTWIN_state[i1]=deepcopy(NEW_DTWIN_state[i1])
+        nn_new=nn_new+1
     
     with open('DTWIN_config.json', "w") as outfile:
         json.dump(DTWIN_config, outfile) 
@@ -62,7 +64,7 @@ def get_data(db_output,mbr_list):
                 Data[exp][sp][sp]=list(db_output[exp]['measurements_aggregated'][sp][sp].values())
             except:
                 print(f'error in {sp}')
-
+        print(Data[exp].keys())
         Data[exp]['Xv']={'measurement_time':Data[exp]['OD600']['measurement_time'],'Xv':(np.array(Data[exp]['OD600']['OD600'])/2.7027).tolist()}
 
     return Data
@@ -174,4 +176,4 @@ def error_f(yexp,ysim):
         return np.sum(er_x1)/er_x1.size
 # %% Error calculation 
 if __name__ == "__main__":
-    NEW_DTWIN_config, NEW_DTWIN_state=update_group(['19419','19420'])
+    NEW_DTWIN_config, NEW_DTWIN_state=update_group(['19419','19420','19427','19428','19435','19436'])
