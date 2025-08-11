@@ -17,7 +17,7 @@ with open('db_dtwin.json') as json_file:
         db_dtwin = json.load(json_file)
 
 mbr='19419'
-species='Acetate' # ['Xv','Glucose','Acetate','DOT','Fluo_RFP','Volume','Dextrine_S','Dextrine_R','Enzyme']
+species='Glucose' # ['Xv','Glucose','Acetate','DOT','Fluo_RFP','Volume','Dextrine_S','Dextrine_R','Enzyme']
 
 t=DTWIN_state[mbr]['All'][species]['time']
 y=DTWIN_state[mbr]['All'][species]['Value']        

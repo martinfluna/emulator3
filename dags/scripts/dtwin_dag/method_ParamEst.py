@@ -32,18 +32,23 @@ def update_group(mbr_list):
     time_final=DTWIN_config['experiment_duration']
 
     
-    New_param=optimize_param(mbr_list,time_final,Data,DTWIN_config,DTWIN_design,DTWIN_state,optim_options=[1, 1])
+    New_param=optimize_param(mbr_list,time_final,Data,DTWIN_config,DTWIN_design,DTWIN_state,optim_options=[10, 10])
     
     NEW_DTWIN_config,NEW_DTWIN_state=simulate(New_param,mbr_list,time_final,Data,DTWIN_config,DTWIN_design,DTWIN_state,mode_sim=2)
-    
+
     WR=method_dtwin.write('db_dtwin2.json',0,time_final,NEW_DTWIN_state,DTWIN_design,NEW_DTWIN_config)
+
+    for i1 in mbr_list:
+        nn=DTWIN_config['Brxtor_list'].index(i1)
+        DTWIN_config['Params'][str(nn)]=NEW_DTWIN_config['Params'][str(nn)]
+        DTWIN_state[i1]=deepcopy(NEW_DTWIN_state[i1])
     
-    # with open('DTWIN_config.json', "w") as outfile:
-    #     json.dump(NEW_DTWIN_config, outfile) 
-    # with open('DTWIN_state.json', "w") as outfile:
-    #     json.dump(NEW_DTWIN_state, outfile) 
+    with open('DTWIN_config.json', "w") as outfile:
+        json.dump(DTWIN_config, outfile) 
+    with open('DTWIN_state.json', "w") as outfile:
+        json.dump(DTWIN_state, outfile) 
     
-    return NEW_DTWIN_config, NEW_DTWIN_state
+    return DTWIN_config, DTWIN_state
 
 # %% Optimization
 def get_data(db_output,mbr_list):
@@ -66,8 +71,8 @@ def get_data(db_output,mbr_list):
 def optimize_param(mbr_list,time_final,DATA,DTWIN_config,DTWIN_design,DTWIN_state,optim_options=[5, 5]):
         
         TH_base=np.array(DTWIN_config['Params']['0'][0:-2]+DTWIN_config['Params']['0'][-2:]*len(mbr_list))
-        THmin=TH_base*.75
-        THmax=TH_base*1.25
+        THmin=TH_base*.5
+        THmax=TH_base*1.5
         
         bounds_th=list(range(len(THmin)))
         for i in range(len(THmin)):
@@ -129,7 +134,7 @@ def simulate(TH,mbr_list,time_final,DATA,DTWIN_config,DTWIN_design,DTWIN_state,m
         nn=nn+1
                 
     NEW_DTWIN_state=method_dtwin.simulate(0,time_final,DTWIN_state_IC,DTWIN_design,NEW_DTWIN_config)
-    if mode_sim=2:
+    if mode_sim==2:
         NEW_DTWIN_config['Noise_concentration']=0
         NEW_DTWIN_state=method_dtwin.sample(0,time_final,NEW_DTWIN_state,DTWIN_design,NEW_DTWIN_config)
     
