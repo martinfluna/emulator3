@@ -5,7 +5,10 @@ import json
 t_duration=14.0
 
 
+
 species_list=['Xv','Glucose','Acetate','DOT','Fluo_RFP','Volume','Dextrine_S','Dextrine_R','Enzyme'] #Model species used in the model
+species_regression_list=['OD600','Glucose','Acetate','DOT','Fluo_RFP'] #Species used to fit the model
+
 
 species_IC=[0.18*1,3,0,100,0,0.01,15*.45,15*.55,0] #Initial states for the species listed above
 glucose_IC=[3,4,4,4,4,4,4,4]*3 #Initial states for the species listed above
@@ -53,6 +56,7 @@ DTWIN_config['Params']=Params
 
 Exp_list=[str(il) for il in mbr_list]
 DTWIN_config['Species_list']=species_list
+DTWIN_config['Species_regression']=species_regression_list
 DTWIN_config['Brxtor_list']=Exp_list
 
 n1=0

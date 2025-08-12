@@ -24,8 +24,9 @@ def update_group(mbr_list):
         DTWIN_config = json.load(json_file)
     with open('db_output.json') as json_file:   
         db_output = json.load(json_file)
-    
-    Data=get_data(db_output,mbr_list)
+        
+    # DTWIN_config['Species_regression']=['OD600','Glucose','Acetate','DOT','Fluo_RFP']
+    Data=get_data(db_output,mbr_list,DTWIN_config['Species_regression'])
     
     time_final_absolute=time.time()
     time_final=min(DTWIN_config['acceleration']*(time_final_absolute-DTWIN_design['time_start_absolute'])/3600,DTWIN_config['experiment_duration'])  
@@ -53,19 +54,26 @@ def update_group(mbr_list):
     return DTWIN_config, DTWIN_state
 
 # %% Optimization
-def get_data(db_output,mbr_list):
+def get_data(db_output,mbr_list,species_regression_list):
     Data={}
+    # species_list_data=['OD600','Glucose','Acetate','DOT','Fluo_RFP']
+    # species_regression_list=DTWIN_config['Species_regression']
     for exp in mbr_list:
         Data[exp]={}
-        for sp in db_output[exp]['measurements_aggregated']:
+        data_list=db_output[exp]['measurements_aggregated']
+        for sp in species_regression_list:#db_output[exp]['measurements_aggregated']:
             Data[exp][sp]={}
-            try:
-                Data[exp][sp]['measurement_time']=list(db_output[exp]['measurements_aggregated'][sp]['measurement_time'].values())
-                Data[exp][sp][sp]=list(db_output[exp]['measurements_aggregated'][sp][sp].values())
-            except:
-                print(f'error in {sp}')
-        print(Data[exp].keys())
-        Data[exp]['Xv']={'measurement_time':Data[exp]['OD600']['measurement_time'],'Xv':(np.array(Data[exp]['OD600']['OD600'])/2.7027).tolist()}
+            if sp in data_list:
+                try:
+                   Data[exp][sp]['measurement_time']=list(db_output[exp]['measurements_aggregated'][sp]['measurement_time'].values())
+                   Data[exp][sp][sp]=list(db_output[exp]['measurements_aggregated'][sp][sp].values())
+                   if sp=='OD600':
+                       Data[exp]['Xv']={'measurement_time':Data[exp]['OD600']['measurement_time'],'Xv':(np.array(Data[exp]['OD600']['OD600'])/2.7027).tolist()}
+
+                except:
+                    print(f'error in {sp}')
+                # print(Data[exp].keys())
+                    
 
     return Data
     
@@ -148,19 +156,20 @@ def error_exp(TH,mbr_list,time_final,DATA,DTWIN_config,DTWIN_design,DTWIN_state)
 
         
         NEW_DTWIN_config,NEW_DTWIN_state=simulate(TH,mbr_list,time_final,DATA,DTWIN_config,DTWIN_design,DTWIN_state)
-        
+        species_list=DTWIN_config['Species_list']
         for i1 in mbr_list:            
-            for i2 in NEW_DTWIN_config['Species_list']:
-                ts_samples=np.array(DATA[i1][i2]['measurement_time'])/3600
-                tt=np.array(NEW_DTWIN_state[i1]['All'][i2]['time'])
-                yy=np.array(NEW_DTWIN_state[i1]['All'][i2]['Value'])
-                
-                y_ts = np.interp(ts_samples, tt, yy)
-                y_exp=np.array(DATA[i1][i2][i2])
-
-                er_X=np.append(er_X,error_f(y_exp,y_ts))
-                # if i2=='Xv':
-                #     plt.plot(ts_samples,y_exp,'.r',tt,yy,'b')
+            for i2 in species_list:#NEW_DTWIN_config['Species_list']:
+                if i2 in DATA[i1]:
+                    ts_samples=np.array(DATA[i1][i2]['measurement_time'])/3600
+                    tt=np.array(NEW_DTWIN_state[i1]['All'][i2]['time'])
+                    yy=np.array(NEW_DTWIN_state[i1]['All'][i2]['Value'])
+                    
+                    y_ts = np.interp(ts_samples, tt, yy)
+                    y_exp=np.array(DATA[i1][i2][i2])
+    
+                    er_X=np.append(er_X,error_f(y_exp,y_ts))
+                    # if i2=='Xv':
+                    #     plt.plot(ts_samples,y_exp,'.r',tt,yy,'b')
                 #     plt.show()
             
         print('error er_X: ',sum(abs(er_X)))
