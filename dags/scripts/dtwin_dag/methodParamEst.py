@@ -37,7 +37,7 @@ def update_group(mbr_list):
     
     NEW_DTWIN_config,NEW_DTWIN_state=simulate(New_param,mbr_list,time_final,Data,DTWIN_config,DTWIN_design,DTWIN_state,mode_sim=2)
 
-    WR=method_dtwin.write('db_dtwin2.json',0,time_final,NEW_DTWIN_state,DTWIN_design,NEW_DTWIN_config)
+    WR=method_dtwin.write('db_dtwin.json',0,time_final,NEW_DTWIN_state,DTWIN_design,NEW_DTWIN_config)
 
     nn_new=0
     for i1 in mbr_list:
@@ -81,8 +81,8 @@ def get_data(db_output,mbr_list,species_regression_list):
 def optimize_param(mbr_list,time_final,DATA,DTWIN_config,DTWIN_design,DTWIN_state,optim_options=[5, 5]):
         
         TH_base=np.array(DTWIN_config['Params']['0'][0:-2]+DTWIN_config['Params']['0'][-2:]*len(mbr_list))
-        THmin=TH_base*.5
-        THmax=TH_base*1.5
+        THmin=TH_base*.8
+        THmax=TH_base*1.2
         
         bounds_th=list(range(len(THmin)))
         for i in range(len(THmin)):
