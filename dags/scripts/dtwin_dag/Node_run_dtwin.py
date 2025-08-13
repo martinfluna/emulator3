@@ -40,7 +40,12 @@ def run_dtwin():
     DTWIN_design=method_dtwin.read('db_dtwin.json',DTWIN_design,DTWIN_config)    
     # #METHOD SIMULATION        
     NEW_DTWIN_state=method_dtwin.simulate(time_initial,time_final,DTWIN_state,DTWIN_design,DTWIN_config)
-        
+    
+    # DTWIN_prediction=method_dtwin.simulate(time_initial,DTWIN_config['experiment_duration'],DTWIN_state,DTWIN_design,DTWIN_config)
+    # for i1 in DTWIN_config['Brxtor_list']:
+    #     for i2 in DTWIN_config['Species_list']:
+    #         NEW_DTWIN_state[i1]['Prediction'][i2]['time']=DTWIN_prediction[i1]['All'][i2]['time']
+    #         NEW_DTWIN_state[i1]['Prediction'][i2]['Value']=DTWIN_prediction[i1]['All'][i2]['Value']
     
     #METHOD OBSERVATION
     NEW_DTWIN_state=method_dtwin.sample(time_initial,time_final,NEW_DTWIN_state,DTWIN_design,DTWIN_config)

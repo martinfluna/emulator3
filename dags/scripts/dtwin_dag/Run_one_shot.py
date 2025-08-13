@@ -11,7 +11,7 @@ import Node_start_dtwin
 Node_start_dtwin.start_dtwin()
 time_a=time.time()
 # time_b=time.time()
-time.sleep(0.934) 
+time.sleep(0.934/10) 
 # %%
 time_c=time.time()   
 # Node_run_dtwin.run_dtwin()

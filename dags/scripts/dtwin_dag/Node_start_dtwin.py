@@ -19,9 +19,10 @@ def start_dtwin():
     
     DTWIN_state={'time_absolute':time.time(),'time':0,'iter':0}
     for i1 in brxtor_list:
-        DTWIN_state[i1]={'All':{},'Sample':{},'Current':{}}
+        DTWIN_state[i1]={'All':{},'Sample':{},'Current':{},'Prediction':{}}
         for i2 in species_list:
             DTWIN_state[i1]['All'][i2]={'time':[0],'Value':[DTWIN_config[i1]['IC'][i2]]}
+            DTWIN_state[i1]['Prediction'][i2]={'time':[0],'Value':[DTWIN_config[i1]['IC'][i2]]}
             DTWIN_state[i1]['Sample'][i2]={'time':[],'Value':[]}
             DTWIN_state[i1]['Current'][i2]=DTWIN_config[i1]['IC'][i2]
     

@@ -76,6 +76,8 @@ def get_data(db_output,mbr_list,species_regression_list):
                     
 
     return Data
+# %% Optimization
+# def get_feed(db_output,mbr_list,species_regression_list):    
     
 # %% Optimization
 def optimize_param(mbr_list,time_final,DATA,DTWIN_config,DTWIN_design,DTWIN_state,optim_options=[5, 5]):
