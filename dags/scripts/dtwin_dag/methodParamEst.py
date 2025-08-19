@@ -30,10 +30,10 @@ def update_group(mbr_list):
     
     time_final_absolute=time.time()
     time_final=min(DTWIN_config['acceleration']*(time_final_absolute-DTWIN_design['time_start_absolute'])/3600,DTWIN_config['experiment_duration'])  
-    # time_final=DTWIN_config['experiment_duration']
 
-    
-    New_param=optimize_param(mbr_list,time_final,Data,DTWIN_config,DTWIN_design,DTWIN_state,optim_options=[3, 3])
+    DTWIN_design=method_dtwin.read('db_output.json',DTWIN_design,DTWIN_config)    
+
+    New_param=optimize_param(mbr_list,time_final,Data,DTWIN_config,DTWIN_design,DTWIN_state,optim_options=[3, 2])
     
     NEW_DTWIN_config,NEW_DTWIN_state=simulate(New_param,mbr_list,time_final,Data,DTWIN_config,DTWIN_design,DTWIN_state,mode_sim=2)
 
@@ -46,18 +46,26 @@ def update_group(mbr_list):
         DTWIN_state[i1]=deepcopy(NEW_DTWIN_state[i1])
         nn_new=nn_new+1
     
+    if time_final<DTWIN_config['experiment_duration']:
+        DTWIN_prediction=method_dtwin.simulate(time_final,DTWIN_config['experiment_duration'],DTWIN_state,DTWIN_design,DTWIN_config)
+        for i1 in DTWIN_config['Brxtor_list']:
+            for i2 in DTWIN_config['Species_list']:
+                DTWIN_state[i1]['Prediction'][i2]['time']=DTWIN_prediction[i1]['All'][i2]['time']
+                DTWIN_state[i1]['Prediction'][i2]['Value']=DTWIN_prediction[i1]['All'][i2]['Value']
+    
+    
     with open('DTWIN_config.json', "w") as outfile:
         json.dump(DTWIN_config, outfile) 
     with open('DTWIN_state.json', "w") as outfile:
         json.dump(DTWIN_state, outfile) 
+    
     
     return DTWIN_config, DTWIN_state
 
 # %% Optimization
 def get_data(db_output,mbr_list,species_regression_list):
     Data={}
-    # species_list_data=['OD600','Glucose','Acetate','DOT','Fluo_RFP']
-    # species_regression_list=DTWIN_config['Species_regression']
+
     for exp in mbr_list:
         Data[exp]={}
         data_list=db_output[exp]['measurements_aggregated']
@@ -72,13 +80,30 @@ def get_data(db_output,mbr_list,species_regression_list):
 
                 except:
                     print(f'error in {sp}')
-                # print(Data[exp].keys())
                     
 
     return Data
 # %% Optimization
 # def get_feed(db_output,mbr_list,species_regression_list):    
-    
+    # Data={}
+
+    # for exp in mbr_list:
+    #     Data[exp]={}
+    #     data_list=db_output[exp]['measurements_aggregated']
+    #     for sp in species_regression_list:#db_output[exp]['measurements_aggregated']:
+    #         Data[exp][sp]={}
+    #         if sp in data_list:
+    #             try:
+    #                Data[exp][sp]['measurement_time']=list(db_output[exp]['measurements_aggregated'][sp]['measurement_time'].values())
+    #                Data[exp][sp][sp]=list(db_output[exp]['measurements_aggregated'][sp][sp].values())
+    #                if sp=='OD600':
+    #                    Data[exp]['Xv']={'measurement_time':Data[exp]['OD600']['measurement_time'],'Xv':(np.array(Data[exp]['OD600']['OD600'])/2.7027).tolist()}
+
+    #             except:
+    #                 print(f'error in {sp}')
+                    
+
+    # return Data
 # %% Optimization
 def optimize_param(mbr_list,time_final,DATA,DTWIN_config,DTWIN_design,DTWIN_state,optim_options=[5, 5]):
         

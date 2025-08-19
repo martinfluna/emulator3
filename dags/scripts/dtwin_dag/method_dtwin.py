@@ -237,12 +237,38 @@ def read(filename,DTWIN_design,DTWIN_config):
 
        
     for i1 in DTWIN_config['Brxtor_list']:
-        f0_pulse=np.array(list(File_dict[i1]['setpoints']['Feed_glc_cum_setpoints']['Feed_glc_cum_setpoints'].values()))
-        tf_pulse=np.array(list(File_dict[i1]['setpoints']['Feed_glc_cum_setpoints']['setpoint_time'].values()))/3600
-        f0_dextrine=np.array(list(File_dict[i1]['setpoints']['Feed_dextrine_cum_setpoints']['Feed_dextrine_cum_setpoints'].values()))
-        tf_dextrine=np.array(list(File_dict[i1]['setpoints']['Feed_dextrine_cum_setpoints']['setpoint_time'].values()))/3600
-        f0_enzyme=np.array(list(File_dict[i1]['setpoints']['Feed_enzyme_cum_setpoints']['Feed_enzyme_cum_setpoints'].values()))
-        tf_enzyme=np.array(list(File_dict[i1]['setpoints']['Feed_enzyme_cum_setpoints']['setpoint_time'].values()))/3600
+        f0_pulse_setpoint=np.array(list(File_dict[i1]['setpoints']['Feed_glc_cum_setpoints']['Feed_glc_cum_setpoints'].values()))
+        tf_pulse_setpoint=np.array(list(File_dict[i1]['setpoints']['Feed_glc_cum_setpoints']['setpoint_time'].values()))/3600
+        f0_dextrine_setpoint=np.array(list(File_dict[i1]['setpoints']['Feed_dextrine_cum_setpoints']['Feed_dextrine_cum_setpoints'].values()))
+        tf_dextrine_setpoint=np.array(list(File_dict[i1]['setpoints']['Feed_dextrine_cum_setpoints']['setpoint_time'].values()))/3600
+        f0_enzyme_setpoint=np.array(list(File_dict[i1]['setpoints']['Feed_enzyme_cum_setpoints']['Feed_enzyme_cum_setpoints'].values()))
+        tf_enzyme_setpoint=np.array(list(File_dict[i1]['setpoints']['Feed_enzyme_cum_setpoints']['setpoint_time'].values()))/3600
+        
+        try:
+            f0_pulse_meas=np.array(list(File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['Cumulated_feed_volume_glucose'].values()))
+            tf_pulse_meas=np.array(list(File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_glucose']['measurement_time'].values()))/3600
+            f0_dextrine_meas=np.array(list(File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_dextrine']['Cumulated_feed_volume_dextrine'].values()))
+            tf_dextrine_meas=np.array(list(File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_dextrine']['measurement_time'].values()))/3600
+            f0_enzyme_meas=np.array(list(File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_enzyme']['Cumulated_feed_volume_enzyme'].values()))
+            tf_enzyme_meas=np.array(list(File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_enzyme']['measurement_time'].values()))/3600
+    
+            tf_pulse=np.hstack([tf_pulse_meas,tf_pulse_setpoint[tf_pulse_setpoint>tf_pulse_meas[-1]]])
+            # print(tf_pulse,tf_pulse_setpoint,tf_pulse_meas)
+            f0_pulse=np.hstack([f0_pulse_meas,f0_pulse_setpoint[tf_pulse_setpoint>tf_pulse_meas[-1]]])
+            tf_dextrine=np.hstack([tf_dextrine_meas,tf_dextrine_setpoint[tf_dextrine_setpoint>tf_dextrine_meas[-1]]])
+            f0_dextrine=np.hstack([f0_dextrine_meas,f0_dextrine_setpoint[tf_dextrine_setpoint>tf_dextrine_meas[-1]]])
+            tf_enzyme=np.hstack([tf_enzyme_meas,tf_enzyme_setpoint[tf_enzyme_setpoint>tf_enzyme_meas[-1]]])
+            f0_enzyme=np.hstack([f0_enzyme_meas,f0_enzyme_setpoint[tf_enzyme_setpoint>tf_enzyme_meas[-1]]])
+        except:
+            tf_pulse=tf_pulse_setpoint
+            f0_pulse=f0_pulse_setpoint
+            tf_dextrine=tf_dextrine_setpoint
+            f0_dextrine=f0_dextrine_setpoint
+            tf_enzyme=tf_enzyme_setpoint
+            f0_enzyme=f0_enzyme_setpoint
+            print('ERROR in meas')
+        
+        
         # f0_pulse=np.array(File_dict[i1]['setpoints']['Feed_glc_cum_setpoints']['Feed_glc_cum_setpoints'])
         # tf_pulse=np.array(File_dict[i1]['setpoints']['Feed_glc_cum_setpoints']['setpoint_time'])/3600
         # f0_dextrine=np.array(File_dict[i1]['setpoints']['Feed_dextrine_cum_setpoints']['Feed_dextrine_cum_setpoints'])

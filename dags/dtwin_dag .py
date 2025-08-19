@@ -14,7 +14,7 @@ try:
     host_path = Variable.get("host_path", deserialize_json=True)
 except:
     print("Host path has not been addded to the airflow UI variables or it has not been done correctly!")
-    # host_path = "/home/ml/Git-CONICET/Emulator/dtwin3/dags"
+
 
 remote_path = "/opt/airflow/dags"
 
@@ -59,11 +59,6 @@ with DAG(
         is_paused_upon_creation=True
 ) as dag:
 
-    # clean_db = base_docker_node(
-    #     task_id=f"clean_db",
-    #     command=["python", "-c", "from database_connector import delete_data; delete_data(623)"]
-    # )    
-
     start_dtwin = base_docker_node(
         task_id=f"start_dtwin",
         command=["python", "-c", "from Node_start_dtwin import start_dtwin; start_dtwin()"],
@@ -84,8 +79,6 @@ with DAG(
     #     command=["python", "-c", "from database_connector import get_feeds; get_feeds(623)"],
     # )
 
-    # clean_db >> start_dtwin >> save_start_time >> save_feeds >> get_feeds
-    # last_node = get_feeds
     last_node = start_dtwin
     
     last_node_update = start_dtwin
@@ -149,9 +142,6 @@ with DAG(
                     #     task_id=f"save_db_{hours * 60 + minutes}_min",
                     #     command=["python", "-c", "from database_connector import save_measurements; save_measurements()"],
                     # )
-
-                    # last_node >> wait >> get_feeds >> run_dtwin >> save_db_dtwin
-                    # last_node = save_db_dtwin
 
                     last_node >> wait >> run_dtwin 
                     last_node = run_dtwin    
