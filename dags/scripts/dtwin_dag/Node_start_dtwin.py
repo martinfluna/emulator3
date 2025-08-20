@@ -17,14 +17,18 @@ def start_dtwin():
     brxtor_list=DTWIN_config['Brxtor_list']
     species_list=DTWIN_config['Species_list']
     
+    
     DTWIN_state={'time_absolute':time.time(),'time':0,'iter':0}
+    DTWIN_prediction={}
     for i1 in brxtor_list:
         DTWIN_state[i1]={'All':{},'Sample':{},'Current':{},'Prediction':{}}
+        DTWIN_prediction[i1]={'Prediction':{}}
         for i2 in species_list:
             DTWIN_state[i1]['All'][i2]={'time':[0],'Value':[DTWIN_config[i1]['IC'][i2]]}
-            DTWIN_state[i1]['Prediction'][i2]={'time':[0],'Value':[DTWIN_config[i1]['IC'][i2]]}
             DTWIN_state[i1]['Sample'][i2]={'time':[],'Value':[]}
             DTWIN_state[i1]['Current'][i2]=DTWIN_config[i1]['IC'][i2]
+            DTWIN_prediction[i1]['Prediction'][i2]={'time':[0],'Value':[DTWIN_config[i1]['IC'][i2]]}
+
     
     DTWIN_design={'time_start_absolute':DTWIN_state['time_absolute']}
     for i1 in brxtor_list:
@@ -53,6 +57,9 @@ def start_dtwin():
         
     with open('DTWIN_design.json', "w") as outfile:
         json.dump(DTWIN_design, outfile) 
+        
+    with open('DTWIN_prediction.json', "w") as outfile:
+        json.dump(DTWIN_prediction, outfile) 
         
 # %%  Write profiles to db_dtwin
     for i4 in brxtor_list:

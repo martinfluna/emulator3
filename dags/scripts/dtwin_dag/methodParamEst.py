@@ -22,6 +22,8 @@ def update_group(mbr_list):
         DTWIN_design = json.load(json_file)
     with open('DTWIN_config.json') as json_file:   
         DTWIN_config = json.load(json_file)
+    with open('DTWIN_prediction.json') as json_file:   
+        DTWIN_prediction = json.load(json_file)
     with open('db_output.json') as json_file:   
         db_output = json.load(json_file)
         
@@ -47,20 +49,20 @@ def update_group(mbr_list):
         nn_new=nn_new+1
     
     if time_final<DTWIN_config['experiment_duration']:
-        DTWIN_prediction=method_dtwin.simulate(time_final,DTWIN_config['experiment_duration'],DTWIN_state,DTWIN_design,DTWIN_config)
+        DTWIN_predict=method_dtwin.simulate(time_final,DTWIN_config['experiment_duration'],DTWIN_state,DTWIN_design,DTWIN_config)
         for i1 in DTWIN_config['Brxtor_list']:
             for i2 in DTWIN_config['Species_list']:
-                DTWIN_state[i1]['Prediction'][i2]['time']=DTWIN_prediction[i1]['All'][i2]['time']
-                DTWIN_state[i1]['Prediction'][i2]['Value']=DTWIN_prediction[i1]['All'][i2]['Value']
+                DTWIN_prediction[i1]['Prediction'][i2]['time']=DTWIN_predict[i1]['All'][i2]['time']
+                DTWIN_prediction[i1]['Prediction'][i2]['Value']=DTWIN_predict[i1]['All'][i2]['Value']
     
     
     with open('DTWIN_config.json', "w") as outfile:
         json.dump(DTWIN_config, outfile) 
-    with open('DTWIN_state.json', "w") as outfile:
-        json.dump(DTWIN_state, outfile) 
+    with open('DTWIN_prediction.json', "w") as outfile:
+        json.dump(DTWIN_prediction, outfile) 
     
     
-    return DTWIN_config, DTWIN_state
+    return DTWIN_config, DTWIN_prediction
 
 # %% Optimization
 def get_data(db_output,mbr_list,species_regression_list):
@@ -212,4 +214,4 @@ def error_f(yexp,ysim):
         return np.sum(er_x1)/er_x1.size
 # %% Error calculation 
 if __name__ == "__main__":
-    NEW_DTWIN_config, NEW_DTWIN_state=update_group(['19419','19420','19427','19428','19435','19436'])
+    NEW_DTWIN_config, NEW_DTWIN_prediction=update_group(['19419','19420','19427','19428','19435','19436'])
