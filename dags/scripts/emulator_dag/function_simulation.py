@@ -35,28 +35,9 @@ def function_simulation(ts0,Xo0,u0,THs,D0={}):
     time_medium_all=np.arange(10/60,time_pulse_all[-1]+10/60,10/60)
     t_u_medium=np.round(time_medium_all[(time_medium_all>=ts_start) & (time_medium_all<=ts_end)],decimals=6)
 
-    
-    
     time_u_concat=np.concatenate((t_u_pulse,t_u_sample,t_u_dextrine,t_u_enzyme,t_u_medium))
     t_u=np.unique(time_u_concat)    
-    # t_u=np.unique(time_u_concat)
 
-    # Index_pulse_all=np.concat(time_pulse_all*0+1,time_sample_all*0,time_dextrine_all*0,time_enzyme_all*0)
-    # Index_sample_all=np.concat(time_pulse_all*0,time_sample_all*0+1,time_dextrine_all*0,time_enzyme_all*0)
-    # Index_dextrine_all=np.concat(time_pulse_all*0,time_sample_all*0,time_dextrine_all*0+1,time_enzyme_all*0)
-    # Index_enzyme_all=np.concat(time_pulse_all*0,time_sample_all*0,time_dextrine_all*0,time_enzyme_all*0+1)
-        
-    # Index_all=np.argsort(time_all)
-    # time_all=np.sort(time_all)
-    
-    # Index_pulse_all=Index_pulse_all[time_all]
-    # Index_sample_all=Index_sample_all[time_all]
-    # Index_dextrine_all=Index_dextrine_all[time_all]
-    # Index_enzyme_all=Index_enzyme_all[time_all]
-    
-
-    # t_u=time_pulse_all[(time_pulse_all>=ts_start) & (time_pulse_all<=ts_end)]
-    # uu=Feed_pulse_all[(time_pulse_all>=ts_start) & (time_pulse_all<=ts_end)]
 
     if len(t_u)==0:
         t_u=np.array([ts_start,ts_end])
@@ -65,11 +46,9 @@ def function_simulation(ts0,Xo0,u0,THs,D0={}):
     else:
         if ts_start<t_u[0]:
             t_u=np.append(ts_start,t_u)
-            # uu=np.append(0,uu)
         if ts_end>t_u[-1]:
             t_u=np.append(t_u,ts_end)
 
-            # uu=np.append(uu,0)
     
 
     Xo1=Xo0.copy()
@@ -119,9 +98,7 @@ def function_simulation(ts0,Xo0,u0,THs,D0={}):
         yy=np.append(yy,y[:,1:],axis=1)
         ni=ni+1
 
-    
-       
-    # y_pd=pd.DataFrame(yy)
+
     return tt,yy.transpose()
 
 # %%    
@@ -129,7 +106,6 @@ def odeFB(t,Xo,THo,u):
 
        X=Xo.copy()
        TH=THo.copy()
-       # print(X)
        X = np.maximum(X, 1e-9)
        
        Xv=X[0]
@@ -183,7 +159,7 @@ def odeFB(t,Xo,THo,u):
        
        Dev=rev/V
        
-       qs=qs_max*S/(S+Ks)#*Ksi/(Ksi+A)#*(1-P/70)
+       qs=qs_max*S/(S+Ks)
        q_ox_max=fracc_q_ox_max*qs_max
        
        q_ox_ss=qs*(1/((qs/q_ox_max)**n_ox+1))**(1/n_ox)
@@ -224,15 +200,12 @@ def odeFB(t,Xo,THo,u):
        dGr=-r_r+Dev*Gr
        dE=Dev*E
        dX=np.array([dXv,dS,dA,dDOT,dP,dV,dGs,dGr,dE])
-       # print('dX',dX,'X',X,'DOT',DOT_ss)
        return dX
 # %%     
 def intM(ts0,Xo0,u0,TH0):    
 
     tspan=np.array([ts0[0],ts0[-1]])
     Xo1=Xo0.tolist().copy()
-
-    # print(ts0)
 
     sol=solve_ivp(lambda t,y: odeFB(t,y,TH0,u0) ,tspan,Xo1,method="BDF", rtol=1e-3, atol=1e-3,t_eval=ts0)
     y_interm=sol.y

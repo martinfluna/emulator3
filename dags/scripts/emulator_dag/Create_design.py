@@ -7,7 +7,7 @@ t_duration=14.0
 
 species_list=['Xv','Glucose','Acetate','DOT','Fluo_RFP','Volume','Dextrine_S','Dextrine_R','Enzyme'] #Model species used in the model
 
-species_IC=[0.18*1,3,0,100,0,0.01,15*.45,15*.55,0] #Initial states for the species listed above
+species_IC=[0.18,3,0,100,0,0.01,15*.45*0,15*.55*0,0] #Initial states for the species listed above
 glucose_IC=[3,4,4,4,4,4,4,4]*3 #Initial states for the species listed above
 
 
@@ -25,12 +25,11 @@ time_samples_analysis=np.arange(1,t_duration,1).tolist()
 Noise_concentration=5 # in %
 Noise_time=1 # in %
 
-# mbr_list=np.arange(21340,21364,1) #names of the bioreactors
 mbr_list=np.arange(19419,19443,1) #names of the bioreactors
 
 Glucose_feed=[200]*len(mbr_list) # in g/l
-Dextrine_feed=[100]*len(mbr_list) # in U/l
-Enzyme_feed=[3000]*len(mbr_list) # in g/l
+Dextrine_feed=[100]*len(mbr_list) # in g/l
+Enzyme_feed=[3000]*len(mbr_list) # in U/l
 
 Induction_time=[10]*len(mbr_list) #Time in hours
 Inductor_conc=[1]*len(mbr_list) # 0 to 1 for now
@@ -42,9 +41,9 @@ for i in range(mbr_list.shape[0]):
     Params_ref_row=(Params_ref*(1+0.33*(np.random.random(len(Params_ref))-.5)/2)).tolist()
     Params[i]=Params_ref_row+(850*(1+0.33*(np.random.random(1)-.5)/2)).tolist()+(90*(1+0.66*(np.random.random(1)-.5)/2)).tolist()
 
-time_execution=[]#np.arange(0,t_duration+1,1).tolist()# # leave empty for Real Time, otherwise use time in hours
+time_execution=[]#
 
-acceleration=4# =1 for real time, or choose between [2, 4, 60, 54000]
+acceleration=60# =1 for real time, or choose between [2, 4, 60, 54000]
 
 # %% Create & Fill config file
 EMULATOR_config={}
@@ -75,9 +74,9 @@ for i1 in Exp_list:
     EMULATOR_config[i1]['Induction_time']=float(Induction_time[n2])
     EMULATOR_config[i1]['Inductor_conc']=float(Inductor_conc[n2])
     
-    EMULATOR_config[i1]['Pulse_profile']={'time_pulse':time_pulses.tolist(),'Feed_pulse':(0+np.zeros(len(time_pulses.tolist()))).tolist(),
-                                          'time_dextrine':time_dextrine.tolist(),'Feed_dextrine':(50+np.zeros(len(time_dextrine.tolist()))).tolist(),
-                                          'time_enzyme':time_enzyme.tolist(),'Feed_enzyme':(25+np.zeros(len(time_enzyme.tolist()))).tolist()}
+    EMULATOR_config[i1]['Pulse_profile']={'time_pulse':time_pulses.tolist(),'Feed_pulse':(5+np.zeros(len(time_pulses.tolist()))).tolist(),
+                                          'time_dextrine':time_dextrine.tolist(),'Feed_dextrine':(0+np.zeros(len(time_dextrine.tolist()))).tolist(),
+                                          'time_enzyme':time_enzyme.tolist(),'Feed_enzyme':(0+np.zeros(len(time_enzyme.tolist()))).tolist()}
 
     EMULATOR_config[i1]['time_sample']={}
     for i2 in EMULATOR_config['Species_list']:
@@ -90,11 +89,7 @@ for i1 in Exp_list:
     n2=n2+1
     
     
-    # EMULATOR_config[i1]['time_sample']['DOT']=np.arange(0,t_duration+sampling_rate_DOT,sampling_rate_DOT).tolist()
     EMULATOR_config[i1]['time_sample']['DOT']=np.linspace(0.04,t_duration,int(t_duration)*25).tolist()
-
-
-
 
 
 EMULATOR_config['number_br']=len(mbr_list)

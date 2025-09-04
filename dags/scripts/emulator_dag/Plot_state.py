@@ -17,7 +17,7 @@ with open('db_emulator.json') as json_file:
         db_emulator = json.load(json_file)
 
 mbr='19419'
-species='Acetate' # ['Xv','Glucose','Acetate','DOT','Fluo_RFP','Volume','Dextrine_S','Dextrine_R','Enzyme']
+species='DOT' # ['Xv','Glucose','Acetate','DOT','Fluo_RFP','Volume','Dextrine_S','Dextrine_R','Enzyme']
 
 t=EMULATOR_state[mbr]['All'][species]['time']
 y=EMULATOR_state[mbr]['All'][species]['Value']        

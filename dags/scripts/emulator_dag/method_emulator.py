@@ -25,9 +25,7 @@ def simulate(time_initial,time_final,EMULATOR_state,EMULATOR_design,EMULATOR_con
             Xo0=np.append(Xo0,EMULATOR_state[i1]['Current'][i2])
         u0=np.array([EMULATOR_design[i1]['Glucose_feed'],nn,EMULATOR_config['number_br'],EMULATOR_design[i1]['Induction_time'],EMULATOR_design[i1]['Inductor_conc'],
                      EMULATOR_design[i1]['Dextrine_feed'],EMULATOR_design[i1]['Enzyme_feed']])
-        # THs=np.array(EMULATOR_config['Params'])
         THs=EMULATOR_config['Params']
-        # print(THs)
         D0=EMULATOR_design[i1]['Pulses'].copy()
         
         t,y=function_simulation(ts0,Xo0,u0,THs,D0)
@@ -81,9 +79,7 @@ def write(filename,time_initial,time_final,EMULATOR_state,EMULATOR_design,EMULAT
       
         for i2 in EMULATOR_config['Species_list']:
             if i2=='Xv':
-                # tsf=(np.array(list(File_dict[i1]['measurements_aggregated']['OD600']['measurement_time'].values()))).tolist()
-                # Xsf=list(File_dict[i1]['measurements_aggregated']['OD600']['OD600'].values())
-                
+
                 ts_new=np.array(EMULATOR_state[i1]['Sample'][i2]['time'])
                 Xsf_new=np.array(EMULATOR_state[i1]['Sample'][i2]['Value'])*2.7027
                 
@@ -127,8 +123,6 @@ def write(filename,time_initial,time_final,EMULATOR_state,EMULATOR_design,EMULAT
                     File_dict[i1]['measurements_aggregated'][i2]['measurement_time'][str(i3)]=tsf[i3]
                     File_dict[i1]['measurements_aggregated'][i2][i2][str(i3)]=Xsf[i3]        
             else:
-                # tsf=(np.array(list(File_dict[i1]['measurements_aggregated'][i2]['measurement_time'].values()))).tolist()
-                # Xsf=list(File_dict[i1]['measurements_aggregated'][i2][i2].values())
 
                 ts_new=np.array(EMULATOR_state[i1]['Sample'][i2]['time'])
                 Xsf_new=np.array(EMULATOR_state[i1]['Sample'][i2]['Value'])
@@ -144,11 +138,7 @@ def write(filename,time_initial,time_final,EMULATOR_state,EMULATOR_design,EMULAT
                     
                 else:
                     tsf=[]
-                # Xsf_new=Xsf_new[(ts_new>time_initial) & (ts_new<=time_final)]
-                # ts_new=ts_new[(ts_new>time_initial) & (ts_new<=time_final)]
-                
-                # tsf=tsf+(ts_new*3600).tolist()
-                # Xsf=Xsf+Xsf_new.tolist()
+
                 try:
                     File_dict[i1]['measurements_aggregated'][i2]['measurement_time']={}
                     File_dict[i1]['measurements_aggregated'][i2][i2]={}
@@ -166,12 +156,12 @@ def write(filename,time_initial,time_final,EMULATOR_state,EMULATOR_design,EMULAT
         ts_enzyme=(np.array(list(File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_enzyme']['measurement_time'].values()))).tolist()
         F_enzyme=list(File_dict[i1]['measurements_aggregated']['Cumulated_feed_volume_enzyme']['Cumulated_feed_volume_enzyme'].values())
 
-        ts_new_pulse=np.array(EMULATOR_design[i1]['Pulses']['time_pulse'])#np.array(EMULATOR_state[i1]['Sample'][i2]['time'])
-        F_new_pulse=np.array(EMULATOR_design[i1]['Pulses']['Feed_pulse'])#np.array(EMULATOR_state[i1]['Sample'][i2]['Value'])
-        ts_new_dextrine=np.array(EMULATOR_design[i1]['Pulses']['time_dextrine'])#np.array(EMULATOR_state[i1]['Sample'][i2]['time'])
-        F_new_dextrine=np.array(EMULATOR_design[i1]['Pulses']['Feed_dextrine'])#np.array(EMULATOR_state[i1]['Sample'][i2]['Value'])
-        ts_new_enzyme=np.array(EMULATOR_design[i1]['Pulses']['time_enzyme'])#np.array(EMULATOR_state[i1]['Sample'][i2]['time'])
-        F_new_enzyme=np.array(EMULATOR_design[i1]['Pulses']['Feed_enzyme'])#np.array(EMULATOR_state[i1]['Sample'][i2]['Value'])
+        ts_new_pulse=np.array(EMULATOR_design[i1]['Pulses']['time_pulse'])#
+        F_new_pulse=np.array(EMULATOR_design[i1]['Pulses']['Feed_pulse'])#
+        ts_new_dextrine=np.array(EMULATOR_design[i1]['Pulses']['time_dextrine'])#
+        F_new_dextrine=np.array(EMULATOR_design[i1]['Pulses']['Feed_dextrine'])#
+        ts_new_enzyme=np.array(EMULATOR_design[i1]['Pulses']['time_enzyme'])#
+        F_new_enzyme=np.array(EMULATOR_design[i1]['Pulses']['Feed_enzyme'])#
         
         F_new_pulse=F_new_pulse[(ts_new_pulse>time_initial) & (ts_new_pulse<=time_final)]
         ts_new_pulse=ts_new_pulse[(ts_new_pulse>time_initial) & (ts_new_pulse<=time_final)].copy()
@@ -243,24 +233,11 @@ def read(filename,EMULATOR_design,EMULATOR_config):
         tf_dextrine=np.array(list(File_dict[i1]['setpoints']['Feed_dextrine_cum_setpoints']['setpoint_time'].values()))/3600
         f0_enzyme=np.array(list(File_dict[i1]['setpoints']['Feed_enzyme_cum_setpoints']['Feed_enzyme_cum_setpoints'].values()))
         tf_enzyme=np.array(list(File_dict[i1]['setpoints']['Feed_enzyme_cum_setpoints']['setpoint_time'].values()))/3600
-        # f0_pulse=np.array(File_dict[i1]['setpoints']['Feed_glc_cum_setpoints']['Feed_glc_cum_setpoints'])
-        # tf_pulse=np.array(File_dict[i1]['setpoints']['Feed_glc_cum_setpoints']['setpoint_time'])/3600
-        # f0_dextrine=np.array(File_dict[i1]['setpoints']['Feed_dextrine_cum_setpoints']['Feed_dextrine_cum_setpoints'])
-        # tf_dextrine=np.array(File_dict[i1]['setpoints']['Feed_dextrine_cum_setpoints']['setpoint_time'])/3600
-        # f0_enzyme=np.array(File_dict[i1]['setpoints']['Feed_enzyme_cum_setpoints']['Feed_enzyme_cum_setpoints'])
-        # tf_enzyme=np.array(File_dict[i1]['setpoints']['Feed_enzyme_cum_setpoints']['setpoint_time'])/3600
 
-        # f_pulse=np.hstack([f0_pulse[0],np.diff(f0_pulse)])
-        # f_dextrine=np.hstack([f0_dextrine[0],np.diff(f0_dextrine)])
-        # f_enzyme=np.hstack([f0_enzyme[0],np.diff(f0_enzyme)])
         f_pulse=np.hstack([f0_pulse[0],np.diff(f0_pulse)])
         f_dextrine=np.hstack([f0_dextrine[0],np.diff(f0_dextrine)])
         f_enzyme=np.hstack([f0_enzyme[0],np.diff(f0_enzyme)])
-        # mask_f0=f0!=None
-        # f_acc=f0[mask_f0]
-        # f=np.hstack([f_acc[0],np.diff(f_acc)])
-        
-        # tf=tf0[mask_f0]/3600
+
 
         NEW_EMULATOR_design[i1]['Pulses']['time_pulse']=tf_pulse.tolist()
         NEW_EMULATOR_design[i1]['Pulses']['Feed_pulse']=f_pulse.tolist()

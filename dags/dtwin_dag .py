@@ -64,121 +64,72 @@ with DAG(
         command=["python", "-c", "from Node_start_dtwin import start_dtwin; start_dtwin()"],
     )
 
-    # save_start_time = base_docker_node(
-    #     task_id=f"save_start_time",
-    #     command=["python", "-c", "from database_connector import save_start_time; save_start_time()"],
-    # )
-
-    # save_feeds = base_docker_node(
-    #     task_id=f"save_feeds",
-    #     command=["python", "-c", "from database_connector import save_multi_actions; save_multi_actions(623, 'db_dtwin.json')"]
-    # ) 
-
-    # get_feeds = base_docker_node(
-    #     task_id=f"get_feeds",
-    #     command=["python", "-c", "from database_connector import get_feeds; get_feeds(623)"],
-    # )
 
     last_node = start_dtwin
     
     last_node_update = start_dtwin
 
-    # -----------------------------  one shot  ---------------------------------
-    if acceleration == 54000:
-
-        run_dtwin = base_docker_node(
-            task_id=f"run_dtwin",
-            command=["python", "-c", "from Node_run_dtwin import run_dtwin; run_dtwin()"],
-        )
-
-        save_measurements = base_docker_node(
-            task_id=f"save_measurements",
-            command=["python", "-c", "from database_connector import save_measurements; save_measurements()"],
-        )
-
-        get_measurements = base_docker_node(
-            task_id=f"get_measurements",
-            command=["python", "-c", "from database_connector import query_and_save; query_and_save(623, 'db_output.json')"],
-        )
-
-        last_node >> run_dtwin >> save_measurements >> get_measurements
-
-    # ----------------------------- iterations ---------------------------------
-    else:
+# -----------------------------  DTwin  ---------------------------------
     
         # iterations every hour to group tasks
-        for hours in range(int(t_duration)):
+    for hours in range(int(t_duration)):
 
-            with TaskGroup(group_id=f"{hours + 1}_hour{'s' if hours+1 > 1 else ''}_tasks"):
+        with TaskGroup(group_id=f"{hours + 1}_hour{'s' if hours+1 > 1 else ''}_tasks"):
 
-                #  iter_minutes[] / acceleration = real time wait
-                if acceleration in [1, 2, 4]:
-                    iter_minutes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
+            #  iter_minutes[] / acceleration = real time wait
+            if acceleration in [1, 2, 4]:
+                iter_minutes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
 
-                if acceleration == 60:
-                    iter_minutes = [60]
+            if acceleration == 60:
+                iter_minutes = [60]
 
-                for minutes in iter_minutes:
+            for minutes in iter_minutes:
 
-                    time = (hours * 60 + minutes) / acceleration
+                time = (hours * 60 + minutes) / acceleration
 
-                    wait = TimeDeltaSensor(
-                        task_id=f"wait_{time}_min", 
-                        poke_interval=10, trigger_rule='all_done', 
-                        delta=dt.timedelta(minutes=time)
-                    )
+                wait = TimeDeltaSensor(
+                    task_id=f"wait_{time}_min", 
+                    poke_interval=10, trigger_rule='all_done', 
+                    delta=dt.timedelta(minutes=time)
+                )
 
-                    # get_feeds = base_docker_node(
-                    #     task_id=f"get_feeds_{hours * 60 + minutes}_min",
-                    #     command=["python", "-c", "from database_connector import get_feeds; get_feeds(623)"],
-                    # )
 
-                    run_dtwin = base_docker_node(
-                        task_id=f"run_dtwin_{hours * 60 + minutes}_min",
-                        command=["python", "-c", "from Node_run_dtwin import run_dtwin; run_dtwin()"],
-                    )
 
-                    # save_db_dtwin = base_docker_node(
-                    #     task_id=f"save_db_{hours * 60 + minutes}_min",
-                    #     command=["python", "-c", "from database_connector import save_measurements; save_measurements()"],
-                    # )
+                run_dtwin = base_docker_node(
+                    task_id=f"run_dtwin_{hours * 60 + minutes}_min",
+                    command=["python", "-c", "from Node_run_dtwin import run_dtwin; run_dtwin()"],
+                )
 
-                    last_node >> wait >> run_dtwin 
-                    last_node = run_dtwin    
-    # ----------------------------- iterations ---------------------------------
-    
-        # iterations every hour to group tasks
-        for hours in range(int(t_duration)):
+                last_node >> wait >> run_dtwin 
+                last_node = run_dtwin    
+# ----------------------------- Update Param ---------------------------------
 
-            with TaskGroup(group_id=f"{hours + 2}_hour{'s' if hours+1 > 1 else ''}_update_tasks"):
+    # iterations every hour to group tasks
+    for hours in range(int(t_duration)):
 
-                #  iter_minutes[] / acceleration = real time wait
+        with TaskGroup(group_id=f"{hours + 2}_hour{'s' if hours+1 > 1 else ''}_update_tasks"):
 
-                iter_minutes_dtwin_update = [60]
 
-                for minutes in iter_minutes_dtwin_update:
+            iter_minutes_dtwin_update = [60]
 
-                    time = (hours * 60 + minutes+70) / acceleration
+            for minutes in iter_minutes_dtwin_update:
 
-                    wait_update = TimeDeltaSensor(
-                        task_id=f"wait_{time}_min", 
-                        poke_interval=10, trigger_rule='all_done', 
-                        delta=dt.timedelta(minutes=time)
-                    )
+                time = (hours * 60 + minutes+70) / acceleration
 
-                    get_measurements = base_docker_node(
-                        task_id=f"get_measurements",
-                        command=["python", "-c", "from database_connector import query_and_save; query_and_save(623, 'db_output.json')"],
-                    )
-                    update_dtwin = base_docker_node(
-                        task_id=f"update_dtwin_{hours * 60 + minutes}_min",
-                        command=["python", "-c", "from methodParamEst import update_group; update_group(['19419','19420','19427','19428','19435','19436'])"],
-                    )
+                wait_update = TimeDeltaSensor(
+                    task_id=f"wait_{time}_min", 
+                    poke_interval=10, trigger_rule='all_done', 
+                    delta=dt.timedelta(minutes=time)
+                )
 
-                    # save_db_dtwin = base_docker_node(
-                    #     task_id=f"save_db_{hours * 60 + minutes}_min",
-                    #     command=["python", "-c", "from database_connector import save_measurements; save_measurements()"],
-                    # )
+                get_measurements = base_docker_node(
+                    task_id=f"get_measurements",
+                    command=["python", "-c", "from database_connector import query_and_save; query_and_save(623, 'db_output.json')"],
+                )
+                update_dtwin = base_docker_node(
+                    task_id=f"update_dtwin_{hours * 60 + minutes}_min",
+                    command=["python", "-c", "from methodParamEst import update_group; update_group(['19419','19420','19427','19428','19435','19436'])"],
+                )
 
-                    last_node_update >> wait_update >> get_measurements >> update_dtwin 
-                    last_node_update = wait_update
+                last_node_update >> wait_update >> get_measurements >> update_dtwin 
+                last_node_update = wait_update
