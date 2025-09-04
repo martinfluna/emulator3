@@ -22,7 +22,7 @@ Go into the newly clone repository, where the [docker_compose.yml](/docker-compo
 and then generate and start the rest of the services by running:
 
     docker-compose up -d
-    (or docker compose up -d)
+(if it doesn't work try  docker compose up -d)
 
 Wait for a few seconds and should be able to access the KIWI experiment DAGs at http://localhost:8080/.
 
